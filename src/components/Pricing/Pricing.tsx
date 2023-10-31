@@ -5,7 +5,6 @@ interface PricingProps {
     description: string;
     price: string;
     features: string[];
-    className?: string;
     children?: React.ReactNode;
     title: string;
 }
@@ -16,12 +15,11 @@ export const Pricing = ({
     price,
     features,
     title,
-    className,
     children
 }: PricingProps) => {
     return (
         <>
-            <div className="max-w-[350px] w-full p-8 gap-4 flex flex-col z-[222] bg-white border rounded-lg shadow-2xl hover:scale-105 duration-300">
+            <div className="max-w-[350px] w-full p-8 gap-4 flex flex-col z-[222] bg-white border rounded-lg shadow-lg hover:scale-105 duration-300">
                 <p className="text-2xl font-bold text-violet-600">{title}</p>
                 <p className="text-black/70">{description}</p>
                 <div className="flex gap-2">

@@ -4,7 +4,7 @@ import Image from "next/image";
 export const FeaturesSection = () => {
     return (
         <>
-            <div id="features" className="max-w-[1200px] w-full m-auto gap-8 min-h-screen grid grid-cols-3 grid-rows-2 [&>*]:shadow-lg max-lg:grid-cols-1 max-[1200px]:px-8 max-[480px]:px-4 max-sm:py-32">
+            <div id="features" className="max-w-[1200px] w-full m-auto gap-8 min-h-screen grid grid-cols-3 grid-rows-2 [&>*]:shadow-lg max-lg:grid-cols-1 max-[1200px]:px-8 max-[480px]:px-4 max-lg:py-32">
                 <Content title="Follow recruitment progress"
                     description="Effortlessly monitor your hiring journey"
                     className="col-span-2 border flex flex-col gap-4 items-start justify-center p-8 rounded-lg relative overflow-hidden z-[222] hover:outline hover:outline-violet-400 hover:scale-105 duration-200 max-lg:col-span-2 max-lg:h-[300px] max-lg:justify-end"

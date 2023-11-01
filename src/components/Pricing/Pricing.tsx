@@ -19,7 +19,7 @@ export const Pricing = ({
 }: PricingProps) => {
     return (
         <>
-            <div className="max-w-[350px] w-full p-8 gap-4 flex flex-col z-[222] bg-white border rounded-lg shadow-lg hover:scale-105 duration-300">
+            <div className="max-w-[350px] h-[400px] m-auto w-full p-8 gap-4 flex flex-col items-start justify-center z-[222] bg-white border rounded-lg shadow-lg hover:scale-105 duration-300 max-lg:p-4    ">
                 <p className="text-2xl font-bold text-violet-600">{title}</p>
                 <p className="text-black/70">{description}</p>
                 <div className="flex gap-2">
@@ -33,7 +33,6 @@ export const Pricing = ({
                         </li>
                     ))}
                 </ul>
-                {children}
             </div>
         </>
     )

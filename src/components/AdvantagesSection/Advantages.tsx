@@ -16,7 +16,7 @@ export const Advantages = ({
 }: AdvantagesProps) => {
     return (
         <>
-            <div className="flex items-start gap-4 justify-center max-w-[1200px] w-full bg-gradient-to-r border p-8 rounded-lg duration-300 hover:bg-violet-100/50">
+            <div className="flex items-start gap-4 justify-center max-w-[1200px] w-full bg-gradient-to-r border p-8 rounded-lg duration-300 hover:bg-violet-100 max-[480px]:p-4">
                 <Icon className="text-indigo-950" fontSize={"large"} component={icon} />
                 <div className="flex flex-col gap-2">
                     <p className="text-xl font-bold text-indigo-950">{title}</p>

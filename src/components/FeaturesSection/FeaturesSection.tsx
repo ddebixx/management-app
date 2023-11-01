@@ -4,7 +4,7 @@ import Image from "next/image";
 export const FeaturesSection = () => {
     return (
         <>
-            <div id="features" className="max-w-[1200px] w-full m-auto gap-8 min-h-screen grid grid-cols-3 grid-rows-2 [&>*]:shadow-lg max-lg:grid-cols-1 max-lg:p-8 max-[1200px]:px-4">
+            <div id="features" className="max-w-[1200px] w-full m-auto gap-8 min-h-screen grid grid-cols-3 grid-rows-2 [&>*]:shadow-lg max-lg:grid-cols-1 max-[1200px]:px-8 max-[480px]:px-4 max-sm:py-32">
                 <Content title="Follow recruitment progress"
                     description="Effortlessly monitor your hiring journey"
                     className="col-span-2 border flex flex-col gap-4 items-start justify-center p-8 rounded-lg relative overflow-hidden z-[222] hover:outline hover:outline-violet-400 hover:scale-105 duration-200 max-lg:col-span-2 max-lg:h-[300px] max-lg:justify-end"
@@ -20,7 +20,7 @@ export const FeaturesSection = () => {
                 <Content title={`Easy to use schedule`}
                     description="Empower your workforce with task scheduling"
                     className="col-span-2 border flex flex-col gap-4 items-start justify-center p-8 rounded-lg relative overflow-hidden z-[222] hover:outline hover:outline-violet-400 hover:scale-105 duration-200 max-lg:col-span-2 max-lg:h-[300px] max-lg:justify-end"
-                ><Image src="/Calendar.png" alt="" width={700} height={700} className="object-cover absolute -right-32 -top-8 z-0 opacity-80 max-lg:min-w-[450px] max-sm:min-w-[400px] max-sm:top-1/2 max-sm:left-1/2 max-sm:transform max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-[480px]:min-w-[300px]" /></Content>
+                ><Image src="/Calendar.png" alt="" width={700} height={700} className="object-cover absolute -right-32 -top-8 z-0 max-lg:min-w-[450px] max-sm:min-w-[400px] max-sm:top-1/2 max-sm:left-1/2 max-sm:transform max-sm:-translate-x-1/2 max-sm:-translate-y-1/2 max-[480px]:min-w-[300px]" /></Content>
             </div>
         </>
     )

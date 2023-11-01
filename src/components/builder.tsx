@@ -20,7 +20,10 @@ export function RenderBuilderContent({ content }: BuilderPageProps) {
   if (content || isPreviewing) {
     return (
       <>
+        <div className="overflow-hidden">
           <BuilderComponent content={content} model="page" />
+        </div>
+
       </>
     );
   }

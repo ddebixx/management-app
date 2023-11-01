@@ -8,7 +8,7 @@ interface HeroProps {
 export const HeroSection = ({ title, description }: HeroProps) => {
     return (
         <>
-            <div className="w-full h-screen flex gap-8 items-center justify-between max-w-[1200px] m-auto z-[222] relative max-[1200px]:px-8 max-[480px]:h-[60vh] max-[480px]:px-4 overflow-clip">
+            <div className="w-full h-screen flex gap-8 items-center justify-between max-w-[1200px] m-auto z-[222] relative max-[1200px]:px-8 max-[480px]:h-[60vh] max-[480px]:px-4">
                 <div className="flex flex-col items-start justify-start text-left gap-8 z-[222] max-lg:gap-4 ">
                     <h1 className="text-6xl font-bold text-[#1b0b3b] tracking-tight max-w-[50%] max-lg:text-5xl max-[480px]:text-3xl">{title}</h1>
                     <p className="text-xl text-[#1b0b3b]/50 max-w-[60%] max-lg:text-lg max-[480px]:text-base">{description}</p>

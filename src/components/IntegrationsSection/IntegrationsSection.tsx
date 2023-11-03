@@ -3,7 +3,7 @@ import Image from 'next/image'
 export const IntegrationsSection = () => {
     return (
         <>
-            <div className="flex flex-col items-center justify-center min-h-screen gap-16 px-8 max-sm:py-32">
+            <div className="flex flex-col items-center justify-center min-h-screen gap-16 px-8 max-sm:py-32 max-[480px]:px-4">
                 <h2 className='text-center text-3xl max-lg:text-2xl max-sm:text-xl min-[1024px]:max-w-[36%]'>
                     We integrate with all tools you already using, so you can run your business from a single place.
                 </h2>

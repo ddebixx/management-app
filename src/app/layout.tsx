@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font'
 import './globals.css'
+import { ModalProvider } from '@/providers/ModalProvider'
+import { AuthModal } from '@/components/AuthModal/AuthModal'
+import { ToasterProvider } from '@/providers/ToasterProvider'
 import { SupabaseProvider } from '@/providers/SupabaseProvider'
 import { UserProvider } from '@/providers/UserProvider'
-import { ModalProvider } from '@/providers/ModalProvider'
-import { AuthModal } from '@/components/AuthModal'
 
 
 export const metadata: Metadata = {
@@ -20,12 +21,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={GeistSans.className}>
+        <ToasterProvider />
         <SupabaseProvider>
-          <UserProvider>
+          {/* <UserProvider> */}
             <ModalProvider />
             <AuthModal />
             {children}
-          </UserProvider>
+          {/* </UserProvider> */}
         </SupabaseProvider>
       </body>
     </html>

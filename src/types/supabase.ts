@@ -132,9 +132,9 @@ export interface Database {
       users: {
         Row: {
           contract: string | null
-          email: string | null
+          email: string
           full_name: string | null
-          id: number
+          id: string
           password: string | null
           position: string | null
           role: string | null
@@ -142,9 +142,9 @@ export interface Database {
         }
         Insert: {
           contract?: string | null
-          email?: string | null
+          email: string
           full_name?: string | null
-          id?: number
+          id?: string
           password?: string | null
           position?: string | null
           role?: string | null
@@ -152,9 +152,9 @@ export interface Database {
         }
         Update: {
           contract?: string | null
-          email?: string | null
+          email?: string
           full_name?: string | null
-          id?: number
+          id?: string
           password?: string | null
           position?: string | null
           role?: string | null

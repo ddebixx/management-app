@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuthModal } from "@/hooks/useAuthModal";
-import { AuthModal } from "../AuthModal";
+import { AuthModal } from "../AuthModal/AuthModal";
 
 export const Navbar = () => {
 

@@ -3,10 +3,8 @@ import { BuilderComponent, useIsPreviewing } from "@builder.io/react";
 import { BuilderContent, builder } from "@builder.io/sdk";
 import DefaultErrorPage from "next/error";
 import "../builder-registry";
-import { SupabaseProvider } from "@/providers/SupabaseProvider";
-import { UserProvider } from "@/providers/UserProvider";
 import { ModalProvider } from "@/providers/ModalProvider";
-import { AuthModal } from "./AuthModal";
+// import { AuthModal } from "./AuthModal/AuthModal";
 
 interface BuilderPageProps {
   content?: BuilderContent;
@@ -25,13 +23,9 @@ export function RenderBuilderContent({ content }: BuilderPageProps) {
     return (
       <>
         <div className="overflow-hidden">
-        <SupabaseProvider>
-          <UserProvider>
             <ModalProvider />
-            <AuthModal />
+            {/* <AuthModal /> */}
           <BuilderComponent content={content} model="page" />
-          </UserProvider>
-        </SupabaseProvider>
         </div>
       </>
     );

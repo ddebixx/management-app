@@ -1,5 +1,5 @@
 export interface UserDetails {
-    id: string;
+    id: number;
     email: string;
     position: string;
     work_start: string;
@@ -7,5 +7,4 @@ export interface UserDetails {
     contract: string;
     full_name: string;
     avatar_url?: string;
-    password: string;
 }

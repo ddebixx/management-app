@@ -1,45 +1,98 @@
-import { Close } from '@mui/icons-material';
-import * as Dialog from '@radix-ui/react-dialog';
+"use client"
+
+import { useCallback, useEffect, useState } from "react";
+import { Close } from "@mui/icons-material";
+import { Button } from "./Button";
+import { IoMdClose } from "react-icons/io";
 
 interface ModalProps {
-    isOpen: boolean;
-    onChange: (open: boolean) => void;
-    title: string;
-    description: string;
-    children: React.ReactNode;
+    isOpen?: boolean;
+    onClose: () => void;
+    onSubmit: () => void;
+    title?: string;
+    body?: React.ReactElement;
+    footer?: React.ReactElement;
+    actionLabel?: string;
+    disabled?: boolean;
 }
 
 export const Modal: React.FC<ModalProps> = ({
     isOpen,
-    onChange,
+    onClose,
+    onSubmit,
     title,
-    description,
-    children
+    body,
+    actionLabel,
+    disabled,
+    footer
 }) => {
+
+    const [showModal, setShowModal] = useState(isOpen);
+
+    useEffect(() => {
+        setShowModal(isOpen);
+    }, [isOpen]);
+
+    const handleClose = useCallback(() => {
+        if (disabled) {
+            return;
+        }
+
+        setShowModal(false);
+        setTimeout(() => {
+            onClose();
+        }, 300)
+    }, [onClose, disabled]);
+
+    
+
+    const handleSubmit = useCallback(() => {
+        if (disabled) {
+            return;
+        }
+
+        onSubmit();
+    }, [onSubmit, disabled]);
+
+    if (!isOpen) {
+        return null;
+    }
+
     return (
-        <Dialog.Root
-            open={isOpen}
-            defaultOpen={isOpen}
-            onOpenChange={onChange}>
-            <Dialog.Portal>
-                <Dialog.Overlay className="fixed z-[999999] inset-0 bg-violet-50 backdrop-blur-sm" />
-                <Dialog.Content className='fixed z-[999999] bg-violet-100 drop-shadow-md border top-[50%] left-[50%] max-h-full h-full w-full translate-x-[-50%] translate-y-[-50%] rounded-lg p-[25px] focus:outline-none md:w-[90vw] md:max-w-[450px] md:h-auto md:max-h-[85vh]'>
-                    <Dialog.Title className='text-xl text-violet-600 text-center font-bold mb-4'>
-                        {title}
-                    </Dialog.Title>
-                    <Dialog.Description className='mb-5 text-sm leading-normal text-center'>
-                        {description}
-                    </Dialog.Description>
-                    <div>
-                        {children}
+        <>
+            <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-[222] outline-none focus:outline-none bg-neutral-800/10">
+                <div className="relative w-[600px] md:w-4/6 lg:w-3/6 xl:w-2/5 my-6 mx-auto h-full lg:h-auto md:h-auto">
+                    {/* Content */}
+                    <div className={`translate duration-300 h-full ${showModal ? 'translate-y-0' : 'translate-y-full'} ${showModal ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                            {/* Header */}
+                            <div className="flex items-center p-6 rounded-t justify-center relative">
+                                <button className="p-1 border-0 hover:opacity-70 transition absolute right-5"
+                                    onClick={handleClose}>
+                                    <IoMdClose />
+                                </button>
+                                <div className="text-lg font-semibold">
+                                    {title}
+                                </div>
+                            </div>
+                            {/* BODY */}
+                            <div className="relative p-6 flex-auto">
+                                {body}
+                            </div>
+                            {/* FOOTER */}
+                            <div className="flex flex-col gap-2 p-6">
+                                <div className="flex flex-col items-center gap-4 w-full">
+                                    <Button disabled={disabled}
+                                        label={actionLabel}
+                                        onClick={handleSubmit}
+                                    />
+                                    {footer}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <Dialog.Close asChild>
-                        <button className='text-violet-400 hover:text-violet-300 absolute top-[10px] right-[10px] inline-flex h-[25px] w-[25px] appearance-none items-center justify-center rounded-full focus:outline-none'>
-                            <Close />
-                        </button>
-                    </Dialog.Close>
-                </Dialog.Content>
-            </Dialog.Portal>
-        </Dialog.Root>
+                </div>
+            </div>
+        </>
     )
 }

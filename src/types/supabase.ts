@@ -38,21 +38,35 @@ export interface Database {
       }
       hours: {
         Row: {
-          hours_submitted: boolean | null
-          month: number
-          year: number
+          endTime: string | null
+          id: number
+          startTime: string | null
+          title: string
+          userId: string
         }
         Insert: {
-          hours_submitted?: boolean | null
-          month: number
-          year: number
+          endTime?: string | null
+          id?: number
+          startTime?: string | null
+          title: string
+          userId: string
         }
         Update: {
-          hours_submitted?: boolean | null
-          month?: number
-          year?: number
+          endTime?: string | null
+          id?: number
+          startTime?: string | null
+          title?: string
+          userId?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "hours_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       recruitment: {
         Row: {

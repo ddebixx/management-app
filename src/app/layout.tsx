@@ -6,6 +6,7 @@ import { AuthModal } from '@/components/AuthModal/AuthModal'
 import { ToasterProvider } from '@/providers/ToasterProvider'
 import { SupabaseProvider } from '@/providers/SupabaseProvider'
 import { UserProvider } from '@/providers/UserProvider'
+import { UserContextProvider } from '@/hooks/useUser'
 
 
 export const metadata: Metadata = {
@@ -23,11 +24,13 @@ export default function RootLayout({
       <body className={GeistSans.className}>
         <ToasterProvider />
         <SupabaseProvider>
-          {/* <UserProvider> */}
-            <ModalProvider />
-            <AuthModal />
-            {children}
-          {/* </UserProvider> */}
+          <UserContextProvider>
+            <UserProvider>
+              <ModalProvider />
+              <AuthModal />
+              {children}
+            </UserProvider>
+          </UserContextProvider>
         </SupabaseProvider>
       </body>
     </html>

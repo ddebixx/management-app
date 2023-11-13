@@ -1,83 +1,9 @@
-// "use client"
-
-// import { useCallback, useEffect, useState } from "react"
-// import {
-//     SubmitHandler,
-//     useForm
-// } from "react-hook-form"
-// import { Input } from "../Inputs/Input";
-// import { useModal } from "@/hooks/useModal";
-// import { Modal } from "../Modal";
-// import { UserDetails } from "@/hooks/UserDetails/types";
-
-// export const UserDetailsModal = () => {
-//     const usePersonalDataModal = useModal();
-//     const [isLoading, setIsLoading] = useState(false);
-
-//     const {
-//         register,
-//         formState: {
-//             errors,
-//         },
-//     } = useForm<UserDetails>({
-//         defaultValues: {
-//             id: 0,
-//             email: "",
-//             position: "",
-//             full_name: "",
-//         },
-//     });
-
-
-//     const bodyContent = (
-//         <div className="flex flex-col gap-4">
-//             <Input
-//                 id="full_name"
-//                 label="Full name"
-//                 register={register}
-//                 disabled={isLoading}
-//                 errors={errors}
-//                 required
-//             />
-//             <Input
-//                 id="email"
-//                 label="Email"
-//                 register={register}
-//                 errors={errors}
-//                 disabled={isLoading}
-//                 required
-//             />
-//             <Input
-//                 id="position"
-//                 label="Stanowisko"
-//                 register={register}
-//                 errors={errors}
-//                 disabled={isLoading}
-//                 required
-//             />
-//         </div>
-//     )
-
-//     return (
-//         <>
-//             <Modal
-//                 isOpen={usePersonalDataModal.isOpen}
-//                 title="Dodaj nowego użytkownika"
-//                 actionLabel="Dodaj"
-//                 onSubmit={() => {}}
-//                 body={bodyContent}
-//                 disabled={isLoading}
-//                 onClose={usePersonalDataModal.onClose}
-//             />
-//         </>
-//     );
-// }
-
 'use client'
+
 import { useCallback, useEffect, useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/supabase'
 import { useRouter } from 'next/navigation'
+import { Database } from '@/types/supabase'
 
 export default function UserDetailsModal({ session }: { session: Session | null }) {
     const supabase = createClientComponentClient<Database>()
@@ -85,6 +11,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
     const [fullname, setFullname] = useState<string | null>(null)
     const [position, setPosition] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
+    const [role, setRole] = useState<string | null>(null)
     const user = session?.user
     const router = useRouter();
 
@@ -94,7 +21,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
 
             const { data, error, status } = await supabase
                 .from('users')
-                .select(`full_name, position, email`)
+                .select(`full_name, position, email, role`)
                 .eq('id', user?.id as any)
                 .single()
 
@@ -106,6 +33,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                 setFullname(data.full_name);
                 setPosition(data.position);
                 setEmail(data.email);
+                setRole(data.role);
             }
         } catch (error) {
             alert('Error loading user data!')
@@ -122,10 +50,12 @@ export default function UserDetailsModal({ session }: { session: Session | null 
         position,
         fullname,
         email,
+        role
     }: {
-        position?: string | null | undefined;
-        fullname?: string | null | undefined;
-        email?: string | null | undefined;
+        position: string | null | undefined;
+        fullname: string | null | undefined;
+        email: string | null | undefined;
+        role: string | null | undefined;
     }) {
 
         try {
@@ -136,6 +66,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                     email: email ?? '',
                     full_name: fullname ?? '',
                     position: position ?? '',
+                    role: role ?? ''
                 },
             ]);
             if (error) throw error
@@ -150,7 +81,8 @@ export default function UserDetailsModal({ session }: { session: Session | null 
     return (
         <div className="form-widget">
             <div>
-                <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed' id="email" type="text" value={session?.user.email} disabled />
+                <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed' id="email" type="text" value={email || ''}
+                    onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div>
                 <input
@@ -158,6 +90,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                     id="fullName"
                     type="text"
                     value={fullname || ''}
+                    placeholder='Full name'
                     onChange={(e) => setFullname(e.target.value)}
                 />
             </div>
@@ -166,20 +99,31 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                     className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
                     id="position"
                     type="text"
+                    placeholder='Position'
                     value={position || ''}
                     onChange={(e) => setPosition(e.target.value)}
                 />
             </div>
             <div>
+                <label htmlFor="Founder">Founder</label>
+                <input type='radio' id="Founder" value="Founder" onChange={(e) => setRole(e.target.value)} />
+                <label htmlFor="ProjectManager">Project Manager</label>
+                <input type='radio' id="ProjectManager" value="Project manager" onChange={(e) => setRole(e.target.value)} />
+                <label htmlFor="worker">Worker</label>
+                <input type='radio' id="worker" value="Worker" onChange={(e) => setRole(e.target.value)} />
+            </div>
+            <div>
                 <button
                     className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
-                    onClick={() => updateProfile({ fullname, position, email })}
+                    onClick={() => {
+                        updateProfile({ fullname, position, email, role })
+                    }
+                    }
                     disabled={loading}
                 >
                     {loading ? 'Loading ...' : 'Update'}
                 </button>
             </div>
-
             <div>
                 <form action="/auth/signout" method="post">
                     <button className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-400 p-4" type="submit">

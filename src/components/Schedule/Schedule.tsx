@@ -1,0 +1,123 @@
+"use client"
+
+import FullCalendar from "@fullcalendar/react"
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import { DateSelectArg } from "@fullcalendar/core"
+import { renderEventContent, handleEvents, handleEventClick } from "@/actions/calendar/EventHandlers"
+import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { useCallback, useEffect, useState } from "react"
+import { Database } from "@/types/supabase"
+
+type Hours = Database["public"]["Tables"]["hours"]["Row"]
+
+export default function Schedule({ session }: { session: Session | null }) {
+    const supabase = createClientComponentClient<Database>();
+    const [isData, setIsData] = useState<Hours[]>([])
+    const [loading, setLoading] = useState(true);
+    const user = session?.user;
+
+    const getHours = useCallback(async () => {
+        try {
+            setLoading(true)
+
+            const { data, error, status } = await supabase
+                .from('hours')
+                .select('*')
+
+            if (error && status !== 406) {
+                throw error
+            }
+
+            if (data) {
+                setIsData(data)
+            } if (data?.length === 0) {
+                alert('No data found!')
+            }
+
+        } catch (error) {
+            alert('Error loading user data!')
+        } finally {
+            setLoading(false)
+        }
+    }, [user, supabase])
+
+    useEffect(() => {
+          getHours();
+          console.log(user?.id);
+          console.log(isData);
+      }, [getHours, user]);
+
+    const handleDateSelect = async (selectInfo: DateSelectArg) => {
+        const calendarApi = selectInfo.view.calendar;
+    };
+
+    return (
+        <>
+            <FullCalendar
+                height={650}
+                plugins={[
+                    resourceTimelinePlugin,
+                    dayGridPlugin,
+                    interactionPlugin,
+                    timeGridPlugin,
+                ]}
+                headerToolbar={{
+                    right: 'today prev,next',
+                    center: 'title',
+                    left: 'timeGridDay,timeGridWeek,dayGridMonth',
+                }}
+                initialView="timeGridWeek"
+                navLinks={true}
+                forceEventDuration={true}
+                defaultAllDayEventDuration={{ hour: 8 }}
+                businessHours={
+                    {
+                        daysOfWeek: [1, 2, 3, 4, 5],
+                        startTime: '08:00',
+                        endTime: '16:00',
+                    }
+                }
+                eventContent={renderEventContent}
+                nowIndicator={false}
+                allDaySlot={false}
+                editable={true}
+                selectable={true}
+                selectMirror={true}
+                dayMaxEventRows={3}
+                schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
+                dayMaxEvents={1}
+                events={
+                    isData.map((event) => {
+                        return {
+                            id: event.id.toString(),
+                            title: event.title,
+                            start: event.startTime?.toString(),
+                            end: event.endTime?.toString(),
+                        }
+                    })
+                }
+                select={handleDateSelect}
+                eventsSet={handleEvents}
+                eventClick={handleEventClick}
+                eventMaxStack={1}
+                locale={"en"}
+                buttonText={
+                    {
+                        today: "Today",
+                        month: "Month",
+                        week: "Week",
+                        day: "Day",
+                    }
+                }
+                slotDuration={"01:00:00"}
+                eventBackgroundColor="rgba(84, 152, 220, .15)"
+                eventDisplay={"list-item"}
+                slotEventOverlap={false}
+                eventBorderColor="transparent"
+            />
+        </>
+    )
+}

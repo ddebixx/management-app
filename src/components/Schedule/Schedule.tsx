@@ -11,7 +11,6 @@ import { Session, createClientComponentClient } from "@supabase/auth-helpers-nex
 import { useCallback, useEffect, useState } from "react"
 import { Database } from "@/types/supabase"
 import Swal from "sweetalert2"
-import { text } from "stream/consumers"
 
 type Hours = Database["public"]["Tables"]["hours"]["Row"]
 
@@ -23,84 +22,77 @@ export default function Schedule({ session }: { session: Session | null }) {
 
     const getHours = useCallback(async () => {
         try {
-            setLoading(true)
-
-            const { data, error, status } = await supabase
-                .from('hours')
-                .select('*')
-                .eq('userId', user?.id as string)
-
-            if (error && status !== 406) {
-                throw error
-            }
-
-            if (data) {
-                setIsData(data)
-            } if (data?.length === 0) {
-                alert('No data found!')
-            }
-
+          setLoading(true);
+    
+          const { data, error, status } = await supabase.from("hours").select("*").eq("userId", user?.id as string);
+    
+          if (error && status !== 406) {
+            throw error;
+          }
+    
+          if (data) {
+            setIsData(data);
+          }
         } catch (error) {
-            alert('Error loading user data!')
+          alert("Error loading user data!");
         } finally {
-            setLoading(false)
+          setLoading(false);
         }
-    }, [user, supabase])
-
-    useEffect(() => {
-          getHours();
-          console.log(user?.id);
-          console.log(isData);
+      }, [user, supabase]);
+    
+      useEffect(() => {
+        getHours();
       }, [getHours, user]);
-
-    const handleDateSelect = async (selectInfo: DateSelectArg) => {
+    
+      const handleDateSelect = async (selectInfo: DateSelectArg) => {
         const calendarApi = selectInfo.view.calendar;
-
+    
         const newHours = {
-            title: "",
-            startTime: selectInfo.startStr,
-            endTime: selectInfo.endStr,
-            userId: user?.id,
+          title: "",
+          startTime: selectInfo.startStr,
+          endTime: selectInfo.endStr,
+          userId: user?.id,
         };
+    
         Swal.fire({
-            title: "Add new hours",
-            text: "",
-            icon: "info",
-            showCancelButton: true,
-            confirmButtonText: "Add",
-            cancelButtonText: "Cancel",
-            showLoaderOnConfirm: true,
-            input: "text",
-            inputValue: newHours.title,
+          title: "Add new hours",
+          text: "",
+          icon: "info",
+          showCancelButton: true,
+          confirmButtonText: "Add",
+          cancelButtonText: "Cancel",
+          showLoaderOnConfirm: true,
+          input: "text",
+          inputValue: newHours.title,
         }).then(async (hours) => {
-            if (hours.isConfirmed) {
-                newHours.title = hours.value;
-
-                calendarApi.addEvent({
-                    title: newHours.title,
-                    start: newHours.startTime,
-                    end: newHours.endTime,
-                });
-
-                try {
-                    await supabase.from("hours").upsert(newHours as any);
-                    Swal.fire({
-                        title: "Success!",
-                        text: "Hours added.",
-                        icon: "success",
-                        confirmButtonText: "Ok",
-                    });
-                } catch (error) {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Something went wrong.",
-                        icon: "error",
-                        confirmButtonText: "Ok",
-                    });
-                }
+          if (hours.isConfirmed) {
+            newHours.title = hours.value;
+    
+            calendarApi.addEvent({
+              title: newHours.title,
+              start: newHours.startTime,
+              end: newHours.endTime,
+            });
+    
+            try {
+              await supabase.from("hours").upsert(newHours as any);
+              Swal.fire({
+                title: "Success!",
+                text: "Hours added.",
+                icon: "success",
+                confirmButtonText: "Ok",
+              });
+            } catch (error) {
+              Swal.fire({
+                title: "Error!",
+                text: "Something went wrong.",
+                icon: "error",
+                confirmButtonText: "Ok",
+              });
             }
+          }
         });
-    };
+      };
 
     return (
         <>

@@ -34,6 +34,8 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                 setPosition(data.position);
                 setEmail(data.email);
                 setRole(data.role);
+            } if (data !== null) {
+                router.push('/dashboard/schedule')
             }
         } catch (error) {
             alert('Error loading user data!')

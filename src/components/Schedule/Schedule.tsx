@@ -10,6 +10,8 @@ import { renderEventContent, handleEvents, handleEventClick } from "@/actions/ca
 import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useCallback, useEffect, useState } from "react"
 import { Database } from "@/types/supabase"
+import Swal from "sweetalert2"
+import { text } from "stream/consumers"
 
 type Hours = Database["public"]["Tables"]["hours"]["Row"]
 
@@ -26,6 +28,7 @@ export default function Schedule({ session }: { session: Session | null }) {
             const { data, error, status } = await supabase
                 .from('hours')
                 .select('*')
+                .eq('userId', user?.id as string)
 
             if (error && status !== 406) {
                 throw error
@@ -52,6 +55,51 @@ export default function Schedule({ session }: { session: Session | null }) {
 
     const handleDateSelect = async (selectInfo: DateSelectArg) => {
         const calendarApi = selectInfo.view.calendar;
+
+        const newHours = {
+            title: "",
+            startTime: selectInfo.startStr,
+            endTime: selectInfo.endStr,
+            userId: user?.id,
+        };
+        Swal.fire({
+            title: "Add new hours",
+            text: "",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonText: "Add",
+            cancelButtonText: "Cancel",
+            showLoaderOnConfirm: true,
+            input: "text",
+            inputValue: newHours.title,
+        }).then(async (hours) => {
+            if (hours.isConfirmed) {
+                newHours.title = hours.value;
+
+                calendarApi.addEvent({
+                    title: newHours.title,
+                    start: newHours.startTime,
+                    end: newHours.endTime,
+                });
+
+                try {
+                    await supabase.from("hours").upsert(newHours as any);
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Hours added.",
+                        icon: "success",
+                        confirmButtonText: "Ok",
+                    });
+                } catch (error) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Something went wrong.",
+                        icon: "error",
+                        confirmButtonText: "Ok",
+                    });
+                }
+            }
+        });
     };
 
     return (

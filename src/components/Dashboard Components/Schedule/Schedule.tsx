@@ -9,9 +9,8 @@ import { DateSelectArg } from "@fullcalendar/core"
 import { renderEventContent, handleEvents, handleEventClick } from "@/actions/calendar/EventHandlers"
 import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useCallback, useEffect, useState } from "react"
-import { Database } from "@/types/supabase"
 import Swal from "sweetalert2"
-import { useRouter } from "next/navigation"
+import { Database } from "@/types/supabase"
 
 type Hours = Database["public"]["Tables"]["hours"]["Row"]
 

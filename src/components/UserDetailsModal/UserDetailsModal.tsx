@@ -9,7 +9,6 @@ export default function UserDetailsModal({ session }: { session: Session | null 
     const supabase = createClientComponentClient<Database>()
     const [loading, setLoading] = useState(true)
     const [fullname, setFullname] = useState<string | null>(null)
-    const [position, setPosition] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
     const [role, setRole] = useState<string | null>(null)
     const user = session?.user
@@ -21,8 +20,8 @@ export default function UserDetailsModal({ session }: { session: Session | null 
 
             const { data, error, status } = await supabase
                 .from('users')
-                .select(`full_name, position, email, role`)
-                .eq('id', user?.id as any)
+                .select(`full_name, email, role`)
+                .eq('id', user?.id as string)
                 .single()
 
             if (error && status !== 406) {
@@ -31,11 +30,8 @@ export default function UserDetailsModal({ session }: { session: Session | null 
 
             if (data) {
                 setFullname(data.full_name);
-                setPosition(data.position);
                 setEmail(data.email);
                 setRole(data.role);
-            } if (data !== null) {
-                router.push('/dashboard/schedule')
             }
         } catch (error) {
             throw error
@@ -49,12 +45,10 @@ export default function UserDetailsModal({ session }: { session: Session | null 
     }, [user, getProfile])
 
     async function updateProfile({
-        position,
         fullname,
         email,
         role
     }: {
-        position: string | null | undefined;
         fullname: string | null | undefined;
         email: string | null | undefined;
         role: string | null | undefined;
@@ -67,7 +61,6 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                 {
                     email: email ?? '',
                     full_name: fullname ?? '',
-                    position: position ?? '',
                     role: role ?? ''
                 },
             ]);
@@ -86,7 +79,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
 
     return (
         <>
-            {session?.user &&
+            {!fullname || !email || !role &&
                 <div className="form-widget">
                     <div>
                         <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed' id="email" type="text" value={email || ''}
@@ -103,28 +96,18 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                         />
                     </div>
                     <div>
-                        <input
-                            className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
-                            id="position"
-                            type="text"
-                            placeholder='Position'
-                            value={position || ''}
-                            onChange={(e) => setPosition(e.target.value)}
-                        />
-                    </div>
-                    <div>
                         <label htmlFor="Founder">Founder</label>
-                        <input type='radio' id="Founder" value="Founder" onChange={(e) => setRole(e.target.value)} />
+                        <input type='checkbox' id="Founder" value="Founder" onChange={(e) => setRole(e.target.value)} />
                         <label htmlFor="ProjectManager">Project Manager</label>
-                        <input type='radio' id="ProjectManager" value="Project manager" onChange={(e) => setRole(e.target.value)} />
+                        <input type='checkbox' id="ProjectManager" value="Project manager" onChange={(e) => setRole(e.target.value)} />
                         <label htmlFor="worker">Worker</label>
-                        <input type='radio' id="worker" value="Worker" onChange={(e) => setRole(e.target.value)} />
+                        <input type='checkbox' id="worker" value="Worker" onChange={(e) => setRole(e.target.value)} />
                     </div>
                     <div>
                         <button
                             className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
                             onClick={() => {
-                                updateProfile({ fullname, position, email, role })
+                                updateProfile({ fullname, email, role })
                                 router.push('/dashboard/schedule')
                             }
                             }
@@ -134,13 +117,16 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                         </button>
                     </div>
                     <div>
-                        <form action="/auth/signout" method="post">
-                            <button className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-400 p-4" type="submit">
-                                Sign out
-                            </button>
-                        </form>
+                        <button onClick={async () => {
+                            await supabase.auth.signOut();
+                            router.push('/home')
+                        }} className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-400 p-4" type="submit">
+                            Sign out
+                        </button>
                     </div>
                 </div>
+            } {fullname && email && role &&
+                router.push('/dashboard/schedule')
             }
         </>
     )

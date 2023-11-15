@@ -97,7 +97,8 @@ export interface Database {
           contract: string | null
           email: string | null
           full_name: string | null
-          id: number
+          id: string
+          manager_id: string | null
           position: string | null
           role: string | null
           work_start: string | null
@@ -106,7 +107,8 @@ export interface Database {
           contract?: string | null
           email?: string | null
           full_name?: string | null
-          id?: number
+          id: string
+          manager_id?: string | null
           position?: string | null
           role?: string | null
           work_start?: string | null
@@ -115,12 +117,21 @@ export interface Database {
           contract?: string | null
           email?: string | null
           full_name?: string | null
-          id?: number
+          id?: string
+          manager_id?: string | null
           position?: string | null
           role?: string | null
           work_start?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "subordinates_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       tasks: {
         Row: {
@@ -145,34 +156,22 @@ export interface Database {
       }
       users: {
         Row: {
-          contract: string | null
           email: string
           full_name: string | null
           id: string
-          password: string | null
-          position: string | null
           role: string | null
-          work_start: string | null
         }
         Insert: {
-          contract?: string | null
           email: string
           full_name?: string | null
           id?: string
-          password?: string | null
-          position?: string | null
           role?: string | null
-          work_start?: string | null
         }
         Update: {
-          contract?: string | null
           email?: string
           full_name?: string | null
           id?: string
-          password?: string | null
-          position?: string | null
           role?: string | null
-          work_start?: string | null
         }
         Relationships: []
       }

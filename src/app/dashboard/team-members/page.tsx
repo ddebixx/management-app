@@ -1,10 +1,11 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar"
-import Schedule from "@/components/Dashboard Components/Schedule/Schedule"
+import AddMemberModal from "@/components/Dashboard Components/TeamMembers/AddMemberModal"
+import { TeamMemberCard } from "@/components/Dashboard Components/TeamMembers/TeamMemberCard"
 import { Database } from "@/types/supabase"
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
 
-export default async function SchedulePage() {
+export default async function TeamMembersPage() {
     const supabase = createServerComponentClient<Database>({ cookies })
     const {
         data: { session },
@@ -14,8 +15,9 @@ export default async function SchedulePage() {
         <>
             {session?.user &&
                 <div>
-                    <Schedule session={session} />
                     <Navbar session={session} />
+                    <AddMemberModal session={session} />
+                    <TeamMemberCard session={session} />
                 </div>
             }
         </>

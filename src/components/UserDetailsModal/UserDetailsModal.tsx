@@ -79,7 +79,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
 
     return (
         <>
-            {!fullname || !email || !role &&
+            {!session?.user.role &&
                 <div className="form-widget">
                     <div>
                         <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed' id="email" type="text" value={email || ''}
@@ -125,7 +125,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                         </button>
                     </div>
                 </div>
-            } {fullname && email && role &&
+            } {session?.user.role && 
                 router.push('/dashboard/schedule')
             }
         </>

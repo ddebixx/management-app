@@ -98,7 +98,7 @@ export default function AddMemberModal({ session }: { session: Session | null })
                             id="workStart"
                             type="date"
                             value={startDate ? startDate.toISOString().slice(0, 10) : ''}
-                            placeholder='Contract'
+                            placeholder='Work start date'
                             onChange={(e) => setStartDate(new Date(e.target.value))}
                         />
                     </div>
@@ -115,11 +115,13 @@ export default function AddMemberModal({ session }: { session: Session | null })
                             className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
                             onClick={async () => {
                                 addMember({ fullname, email, role, contract: '', position: '', workStart: new Date() })
-                                const { data, error } = await supabase.auth.admin.generateLink({
-                                    type: 'signup',
+                                const { data, error } = await supabase.auth.signInWithOtp({
                                     email: email as string,
-                                    password: 'secret',
-                                });
+                                    options: {
+                                        shouldCreateUser: true,
+                                        emailRedirectTo: 'https://localhost:3000/register',
+                                    },
+                                })
                             }
                             }
                         >

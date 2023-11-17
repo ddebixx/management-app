@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
 
+
 export default function AddMemberModal({ session }: { session: Session | null }) {
     const supabase = createClientComponentClient<Database>()
     const [loading, setLoading] = useState(true)

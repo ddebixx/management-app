@@ -125,8 +125,6 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                         </button>
                     </div>
                 </div>
-            } {session?.user.role && 
-                router.push('/dashboard/schedule')
             }
         </>
     )

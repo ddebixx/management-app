@@ -26,10 +26,6 @@ export const AuthModal = () => {
         if (session) {
             onClose()
         }
-
-        if (session?.user) {
-            router.push('/register')
-        }
     }, [session, router, onClose])
 
     return (

@@ -130,29 +130,66 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subordinates_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           }
         ]
       }
       tasks: {
         Row: {
+          assigned_manager: string | null
+          assigned_worker: string | null
+          assignment_date: string | null
           expiry_date: string | null
           id: number
+          manager_name: string | null
           task_description: string | null
           task_name: string
+          worker_name: string | null
         }
         Insert: {
+          assigned_manager?: string | null
+          assigned_worker?: string | null
+          assignment_date?: string | null
           expiry_date?: string | null
           id?: number
+          manager_name?: string | null
           task_description?: string | null
           task_name: string
+          worker_name?: string | null
         }
         Update: {
+          assigned_manager?: string | null
+          assigned_worker?: string | null
+          assignment_date?: string | null
           expiry_date?: string | null
           id?: number
+          manager_name?: string | null
           task_description?: string | null
           task_name?: string
+          worker_name?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_assigned_manager_fkey"
+            columns: ["assigned_manager"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_assigned_worker_fkey"
+            columns: ["assigned_worker"]
+            isOneToOne: false
+            referencedRelation: "subordinates"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       users: {
         Row: {

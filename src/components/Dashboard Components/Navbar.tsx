@@ -15,6 +15,7 @@ export const Navbar = ({ session }: { session: Session | null }) => {
                 <div className="flex gap-4">
                     <Link href={"/dashboard/team-members"}>TEAM MEMBERS</Link>
                     <Link href={"/dashboard/schedule"}>SCHEDULE</Link>
+                    <Link href={"/dashboard/tasks"}>TASKS</Link>
                 </div>
                 <button onClick={async () => {
                     await supabase.auth.signOut();

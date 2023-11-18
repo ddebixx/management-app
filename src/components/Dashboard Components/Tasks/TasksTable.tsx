@@ -26,7 +26,10 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
         try {
             setLoading(true);
 
-            const { data, error, status } = await supabase.from("tasks").select("*").eq("assigned_manager", user?.id as string);
+            const { data, error, status } = await supabase
+            .from("tasks")
+            .select("*")
+            .eq("assigned_manager", user?.id as string);
 
             if (error && status !== 406) {
                 throw error;

@@ -57,7 +57,9 @@ export default function UserDetailsModal({ session }: { session: Session | null 
         try {
             setLoading(true)
 
-            const { error } = await supabase.from('users').upsert([
+            const { error } = await supabase
+            .from('users')
+            .upsert([
                 {
                     email: email ?? '',
                     full_name: fullname ?? '',

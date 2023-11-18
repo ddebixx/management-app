@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar"
+import AssignTasksModal from "@/components/Dashboard Components/Tasks/AssignTaskModal"
 import { TasksTable } from "@/components/Dashboard Components/Tasks/TasksTable"
 import { Database } from "@/types/supabase"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
@@ -15,6 +16,7 @@ export default async function TasksPage () {
             <div>
                 <Navbar session={session} />
                 <TasksTable session={session} />
+                <AssignTasksModal session={session} />
             </div>
         </>
     )

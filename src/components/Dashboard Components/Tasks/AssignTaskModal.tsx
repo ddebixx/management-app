@@ -5,6 +5,9 @@ import { Session, createClientComponentClient } from '@supabase/auth-helpers-nex
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/supabase'
 
+
+type Members = Database["public"]["Tables"]["subordinates"]["Row"]
+
 export default function AssignTasksModal({ session }: { session: Session | null }) {
     const supabase = createClientComponentClient<Database>()
     const [loading, setLoading] = useState(true)
@@ -13,33 +16,34 @@ export default function AssignTasksModal({ session }: { session: Session | null 
     const [taskName, setTaskName] = useState<string | null>(null)
     const [taskDescription, setTaskDescription] = useState<string | null>(null)
     const [assignmentDate, setAssignmentDate] = useState<string | null>(null)
-    const [workerName, setWorkerName] = useState<string | null>(null)
     const [workerId, setWorkerId] = useState<string | null>(null)
+    const [isData, setIsData] = useState<Members[]>([])
+    const [selectedWorkerId, setSelectedWorkerId] = useState<string | null>(null);
+    const [selectedWorkerName, setSelectedWorkerName] = useState<string | null>(null);
+
     const user = session?.user
     const router = useRouter();
 
     const getWorker = useCallback(async () => {
         try {
-            setLoading(true)
+            setLoading(true);
 
             const { data, error, status } = await supabase
-                .from('tasks')
-                .select(`worker_name, assigned_worker`)
-                .eq('assigned_manager', user?.id as string)
-                .single()
+                .from("subordinates")
+                .select("*")
+                .eq("manager_id", user?.id as string);
 
             if (error && status !== 406) {
-                throw error
+                throw error;
             }
 
             if (data) {
-                setWorkerName(data.worker_name);
-                setWorkerId(data.assigned_worker);
+                setIsData(data);
             }
         } catch (error) {
-            throw error
+            alert("Error loading user data!");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }, [user, supabase])
 
@@ -55,9 +59,9 @@ export default function AssignTasksModal({ session }: { session: Session | null 
         managerName,
         assignmentDate,
         expiryDate,
-        workerName,
         managerId = user?.id,
         workerId,
+        workerName,
         taskName,
         taskDescription
     }: {
@@ -77,18 +81,18 @@ export default function AssignTasksModal({ session }: { session: Session | null 
         try {
             setLoading(true)
 
-            const { error } = await supabase 
+            const { error } = await supabase
                 .from('tasks')
                 .upsert([
                     {
                         manager_name: managerName ?? '',
                         assignment_date: assignmentDate ?? '',
                         expiry_date: expiryDate ?? '',
-                        worker_name: workerName ?? '',
                         assigned_manager: managerId ?? '',
                         assigned_worker: workerId ?? '',
                         task_name: taskName ?? '',
-                        task_description: taskDescription ?? ''
+                        task_description: taskDescription ?? '',
+                        worker_name: workerName ?? ''
                     }
                 ])
                 .eq('id', user?.id as string);
@@ -143,9 +147,19 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                         />
                     </div>
                     <div>
-                    <select>
-                        <option value="workerId">{workerName}</option>
-                    </select>
+                        <select
+                            value={selectedWorkerId || ''}
+                            onChange={(e) => {
+                                const selectedId = e.target.value;
+                                const selectedName = isData.find(member => member.id === selectedId)?.full_name || '';
+                                setSelectedWorkerId(selectedId);
+                                setSelectedWorkerName(selectedName);
+                            }}
+                        >
+                            {isData.map((member) => (
+                                <option key={member.id} value={member.id}>{member.full_name}</option>
+                            ))}
+                        </select>
                     </div>
                     <div>
                         <button
@@ -155,9 +169,9 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                                     managerName,
                                     assignmentDate,
                                     expiryDate,
-                                    workerName,
                                     managerId: user?.id,
-                                    workerId,
+                                    workerId: selectedWorkerId,
+                                    workerName: selectedWorkerName,
                                     taskName,
                                     taskDescription
                                 });

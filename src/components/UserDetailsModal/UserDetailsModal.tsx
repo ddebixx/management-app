@@ -58,14 +58,14 @@ export default function UserDetailsModal({ session }: { session: Session | null 
             setLoading(true)
 
             const { error } = await supabase
-            .from('users')
-            .upsert([
-                {
-                    email: email ?? '',
-                    full_name: fullname ?? '',
-                    role: role ?? ''
-                },
-            ]);
+                .from('users')
+                .upsert([
+                    {
+                        email: email ?? '',
+                        full_name: fullname ?? '',
+                        role: role ?? ''
+                    },
+                ]);
             if (error) throw error
             alert('Profile updated!')
         } catch (error) {
@@ -81,53 +81,51 @@ export default function UserDetailsModal({ session }: { session: Session | null 
 
     return (
         <>
-            {!session?.user.role &&
-                <div className="form-widget">
-                    <div>
-                        <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed' id="email" type="text" value={email || ''}
-                            onChange={(e) => setEmail(e.target.value)} />
-                    </div>
-                    <div>
-                        <input
-                            className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
-                            id="fullName"
-                            type="text"
-                            value={fullname || ''}
-                            placeholder='Full name'
-                            onChange={(e) => setFullname(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="Founder">Founder</label>
-                        <input type='checkbox' id="Founder" value="Founder" onChange={(e) => setRole(e.target.value)} />
-                        <label htmlFor="ProjectManager">Project Manager</label>
-                        <input type='checkbox' id="ProjectManager" value="Project manager" onChange={(e) => setRole(e.target.value)} />
-                        <label htmlFor="worker">Worker</label>
-                        <input type='checkbox' id="worker" value="Worker" onChange={(e) => setRole(e.target.value)} />
-                    </div>
-                    <div>
-                        <button
-                            className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
-                            onClick={() => {
-                                updateProfile({ fullname, email, role })
-                                router.push('/dashboard/schedule')
-                            }
-                            }
-                            disabled={loading}
-                        >
-                            {loading ? 'Loading ...' : 'Update'}
-                        </button>
-                    </div>
-                    <div>
-                        <button onClick={async () => {
-                            await supabase.auth.signOut();
-                            router.push('/home')
-                        }} className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-400 p-4" type="submit">
-                            Sign out
-                        </button>
-                    </div>
+            <div className="form-widget">
+                <div>
+                    <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed' id="email" type="text" value={email || ''}
+                        onChange={(e) => setEmail(e.target.value)} />
                 </div>
-            }
+                <div>
+                    <input
+                        className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                        id="fullName"
+                        type="text"
+                        value={fullname || ''}
+                        placeholder='Full name'
+                        onChange={(e) => setFullname(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="Founder">Founder</label>
+                    <input type='checkbox' id="Founder" value="Founder" onChange={(e) => setRole(e.target.value)} />
+                    <label htmlFor="ProjectManager">Project Manager</label>
+                    <input type='checkbox' id="ProjectManager" value="Project manager" onChange={(e) => setRole(e.target.value)} />
+                    <label htmlFor="worker">Worker</label>
+                    <input type='checkbox' id="worker" value="Worker" onChange={(e) => setRole(e.target.value)} />
+                </div>
+                <div>
+                    <button
+                        className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
+                        onClick={() => {
+                            updateProfile({ fullname, email, role })
+                            router.push('/dashboard/schedule')
+                        }
+                        }
+                        disabled={loading}
+                    >
+                        {loading ? 'Loading ...' : 'Update'}
+                    </button>
+                </div>
+                <div>
+                    <button onClick={async () => {
+                        await supabase.auth.signOut();
+                        router.push('/home')
+                    }} className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-400 p-4" type="submit">
+                        Sign out
+                    </button>
+                </div>
+            </div>  
         </>
     )
 }

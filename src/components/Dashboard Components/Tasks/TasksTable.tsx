@@ -66,6 +66,9 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                 columnHelper.accessor("manager_name" as any, {
                     header: "Manager",
                 }),
+                columnHelper.accessor("worker_name" as any, {
+                    header: "Worker",
+                }),
             ];
         }
 

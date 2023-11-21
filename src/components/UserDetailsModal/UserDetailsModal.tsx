@@ -13,7 +13,6 @@ export default function UserDetailsModal({ session }: { session: Session | null 
     const [role, setRole] = useState<string | null>(null)
     const user = session?.user
     const router = useRouter();
-
     const getProfile = useCallback(async () => {
         try {
             setLoading(true)

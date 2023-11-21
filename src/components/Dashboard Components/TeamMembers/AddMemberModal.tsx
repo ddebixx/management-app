@@ -41,7 +41,7 @@ export default function AddMemberModal({ session }: { session: Session | null })
                     role: role ?? '',
                     contract: contract ?? '',
                     position: position ?? '',
-                    work_start: workStart as any,
+                    work_start: workStart ?? '',
                 },
             ]);
             if (error) throw error

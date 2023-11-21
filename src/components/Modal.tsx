@@ -1,30 +1,22 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react";
-import { Close } from "@mui/icons-material";
-import { Button } from "./Button";
 import { IoMdClose } from "react-icons/io";
 
 interface ModalProps {
     isOpen?: boolean;
     onClose: () => void;
-    onSubmit: () => void;
     title?: string;
     body?: React.ReactElement;
-    footer?: React.ReactElement;
-    actionLabel?: string;
     disabled?: boolean;
 }
 
 export const Modal: React.FC<ModalProps> = ({
     isOpen,
     onClose,
-    onSubmit,
     title,
     body,
-    actionLabel,
     disabled,
-    footer
 }) => {
 
     const [showModal, setShowModal] = useState(isOpen);
@@ -43,16 +35,6 @@ export const Modal: React.FC<ModalProps> = ({
             onClose();
         }, 300)
     }, [onClose, disabled]);
-
-    
-
-    const handleSubmit = useCallback(() => {
-        if (disabled) {
-            return;
-        }
-
-        onSubmit();
-    }, [onSubmit, disabled]);
 
     if (!isOpen) {
         return null;
@@ -78,16 +60,6 @@ export const Modal: React.FC<ModalProps> = ({
                             {/* BODY */}
                             <div className="relative p-6 flex-auto">
                                 {body}
-                            </div>
-                            {/* FOOTER */}
-                            <div className="flex flex-col gap-2 p-6">
-                                <div className="flex flex-col items-center gap-4 w-full">
-                                    <Button disabled={disabled}
-                                        label={actionLabel}
-                                        onClick={handleSubmit}
-                                    />
-                                    {footer}
-                                </div>
                             </div>
                         </div>
                     </div>

@@ -12,24 +12,57 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import { ArrowLeft, ArrowRight, Search } from "@mui/icons-material";
+import { DropDownMenu } from "./DropDownMenu";
+import EditTaskModal from "./EditTaskModal";
 
 type Tasks = Database["public"]["Tables"]["tasks"]["Row"]
 
 export const TasksTable = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>();
     const [isData, setIsData] = useState<Tasks[]>([])
+    const [role, setRole] = useState<string | null>(null)
+    const [taskToEdit, setTaskToEdit] = useState<any | null>(null)
     const [loading, setLoading] = useState(true);
     const user = session?.user;
     const columnHelper = createColumnHelper();
     const [globalFilter, setGlobalFilter] = useState("");
-    const getTasks = useCallback(async () => {
+    const getUserRole = useCallback(async () => {
         try {
             setLoading(true);
 
             const { data, error, status } = await supabase
-            .from("tasks")
-            .select("*")
-            .eq("assigned_manager", user?.id as string);
+                .from("users")
+                .select("role")
+                .eq("id", user?.id as string)
+                .single();
+
+            if (error && status !== 406) {
+                throw error;
+            }
+
+            if (data) {
+                setRole(data.role);
+            }
+        } catch (error) {
+            alert("Error loading user data!");
+        } finally {
+            setLoading(false);
+        }
+    }, [user, supabase]);
+
+    const getTasks = useCallback(async () => {
+        try {
+            setLoading(true);
+
+            let query = supabase.from("tasks").select("*");
+
+            if (role === "Project manager") {
+                query = query.eq("assigned_manager", user?.id as string);
+            } else {
+                query = query.eq("assigned_worker", user?.id as string);
+            }
+
+            const { data, error, status } = await query;
 
             if (error && status !== 406) {
                 throw error;
@@ -38,36 +71,63 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
             if (data) {
                 setIsData(data);
             }
-
         } catch (error) {
             alert("Error loading user data!");
         } finally {
             setLoading(false);
         }
-    }, [user, supabase]);
+    }, [user, supabase, role]);
 
     useEffect(() => {
-        getTasks();
-    }, [getTasks, user]);
+        getUserRole();
+    }, [getUserRole, user]);
 
-    console.log(isData)
-
+    useEffect(() => {
+        if (role) {
+            getTasks();
+        }
+    }, [getTasks, role, user]);
     const generateColumns = (): any[] => {
         if (isData.length === 0) {
             return [];
         } else if (isData.length > 0 && "id" in isData[0]) {
             return [
-                columnHelper.accessor("task_name" as any, {
+                columnHelper.accessor("task_name", {
                     header: "Task",
                 }),
-                columnHelper.accessor("task_description" as any, {
+                columnHelper.accessor("task_description", {
                     header: "Description",
                 }),
-                columnHelper.accessor("manager_name" as any, {
+                columnHelper.accessor("manager_name", {
                     header: "Manager",
                 }),
-                columnHelper.accessor("worker_name" as any, {
+                columnHelper.accessor("worker_name", {
                     header: "Worker",
+                }),
+                columnHelper.accessor("assignment_date", {
+                    header: "Assignment Date",
+                }),
+                columnHelper.accessor("expiry_date", {
+                    header: "Expiry Date",
+                }),
+                columnHelper.accessor("task_status", {
+                    header: "Status",
+                }),
+                columnHelper.accessor("id", {
+                    header: "",
+                    cell: (row) => {
+                        const taskId = "id" in (row.row.original as any) ? (row.row.original as any).id : null;
+                        return (
+                            <>
+                                {user && (
+                                    <DropDownMenu
+                                        setTaskToEdit={setTaskToEdit}
+                                        taskId={taskId}
+                                    />
+                                )}
+                            </>
+                        );
+                    }
                 }),
             ];
         }
@@ -208,6 +268,11 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                     />
                 </span>
             </div>
+            {taskToEdit && (
+                <EditTaskModal
+                    taskToEdit={taskToEdit}
+                />
+            )}
         </>
     )
 }

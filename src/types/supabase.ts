@@ -150,6 +150,7 @@ export interface Database {
           manager_name: string | null
           task_description: string | null
           task_name: string
+          task_status: string | null
           worker_name: string | null
         }
         Insert: {
@@ -161,6 +162,7 @@ export interface Database {
           manager_name?: string | null
           task_description?: string | null
           task_name: string
+          task_status?: string | null
           worker_name?: string | null
         }
         Update: {
@@ -172,6 +174,7 @@ export interface Database {
           manager_name?: string | null
           task_description?: string | null
           task_name?: string
+          task_status?: string | null
           worker_name?: string | null
         }
         Relationships: [

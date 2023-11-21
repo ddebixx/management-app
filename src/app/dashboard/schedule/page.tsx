@@ -10,6 +10,8 @@ export default async function SchedulePage() {
         data: { session },
     } = await supabase.auth.getSession()
 
+    
+
     return (
         <>
             {session?.user &&

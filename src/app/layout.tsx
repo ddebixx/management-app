@@ -5,8 +5,7 @@ import { ModalProvider } from '@/providers/ModalProvider'
 import { AuthModal } from '@/components/AuthModal/AuthModal'
 import { ToasterProvider } from '@/providers/ToasterProvider'
 import { SupabaseProvider } from '@/providers/SupabaseProvider'
-import { UserProvider } from '@/providers/UserProvider'
-import { UserContextProvider } from '@/hooks/useUser'
+import UserContextProvider from '@/hooks/useUser'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -24,11 +23,9 @@ export default function RootLayout({
         <ToasterProvider />
         <SupabaseProvider>
           <UserContextProvider>
-            <UserProvider>
-              <ModalProvider />
-              <AuthModal />
-              {children}
-            </UserProvider>
+            <ModalProvider />
+            <AuthModal />
+            {children}
           </UserContextProvider>
         </SupabaseProvider>
       </body>

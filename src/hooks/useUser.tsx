@@ -1,76 +1,50 @@
 "use client"
 
-import { useSessionContext, 
-    useUser as useSupaUser,
-    User 
-} from "@supabase/auth-helpers-react";
-import { useState, useEffect, createContext, useContext } from "react";
-import { UserDetails } from "./UserDetails/types";
-
+import { UserDetails } from "@/types/types"
+import { createContext, useContext, useState } from "react";
 
 type UserContextType = {
-    user: User | null;
-    userDetails: UserDetails | null;
-    isLoading: boolean;
+    user: UserDetails | null;
+    setUser: (user: UserDetails | null) => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(
-    undefined,
-);
+export const UserContext = createContext<UserContextType | null>(null);
 
-export interface Props {
-    [propName: string]: any;
-}
-
-export const UserContextProvider = (props: Props) => {
-    const {
-        session,
-        isLoading: isLoadingUser,
-        supabaseClient: supabase,
-    } = useSessionContext();
-    const user = useSupaUser();
-    const accessToken = session?.access_token ?? null;
-    const [isLoadingData, setIsLoadingData] = useState(false);
-    const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-    const getUserDetails = () => supabase.from('users').select('*').single();
-    
-
-    useEffect(() => {
-        if (user && !isLoadingData && !userDetails) {
-            setIsLoadingData(true);
-            Promise.allSettled([getUserDetails()]).then(
-                (results) => {
-                    const userDetailsPromise = results[0];
-
-                    if (userDetailsPromise.status === 'fulfilled') {
-                        setUserDetails(userDetailsPromise.value.data as UserDetails);
-                    }
-
-                    setIsLoadingData(false);
-                }
-            );
-        } else if (!user && !isLoadingUser || !isLoadingData) {
-            setUserDetails(null);
-        }
-    }, [user, isLoadingUser]); 
-    
-    const value = {
-        accessToken,
-        user,
-        userDetails,
-        isLoading: isLoadingUser || isLoadingData,
-    };
-
-    return <UserContext.Provider value={value} {...props} />
-}
-
-
-export const useUser = () => {
-    const context = useContext(UserContext);
-
-    if (context === undefined) {
-        throw new Error('useUser must be used within a UserContextProvider');
+export default function UserContextProvider({ children }: { children: React.ReactNode }) {
+    const [user, setUser] = useState<UserDetails | null>(null);
+    const saveUser = (user: UserDetails | null) => {
+        setUser(user);
+        localStorage.setItem('user', JSON.stringify(user));
     }
 
+    const getUser = () => {
+        if (user) {
+            return user;
+        }
+
+        const localStorageUser = localStorage.getItem('user');
+
+        if (localStorageUser) {
+            return JSON.parse(localStorageUser);
+        }
+
+        return null;
+    }
+
+    return (
+        <UserContext.Provider value={{
+            user: getUser(),
+            setUser: saveUser
+        }}>
+            {children}
+        </UserContext.Provider>
+    )
+}
+
+export function useUserContext() {
+    const context = useContext(UserContext);
+    if (!context) {
+        throw new Error('useUserContext must be used within a UserContextProvider')
+    }
     return context;
 }

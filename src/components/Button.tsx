@@ -4,7 +4,7 @@ import { IconType } from "react-icons";
 
 interface ButtonProps {
     label?: string;
-    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     disabled?: boolean;
     outline?: boolean;
     small?: boolean;
@@ -20,7 +20,6 @@ export const Button = ({
     outline,
     small,
     icon: Icon,
-    className
 }: ButtonProps) => {
     return (
         <button onClick={onClick} 

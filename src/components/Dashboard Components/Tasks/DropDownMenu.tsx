@@ -3,6 +3,9 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import Swal from 'sweetalert2';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Database } from '@/types/supabase';
 
 export interface DropDownMenuProps {
     setTaskToEdit: (taskId: any) => void;
@@ -10,6 +13,41 @@ export interface DropDownMenuProps {
 }
 
 export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
+    const supabase = createClientComponentClient<Database>();
+    const deleteTask = async () => {
+        Swal.fire({
+            title: 'Are you sure?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            showLoaderOnConfirm: true,
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await supabase.from('tasks')
+                        .delete()
+                        .eq('id', taskId);
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: 'Your task has been deleted.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1000
+                    })
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong.',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        timer: 1000
+                    })
+                }
+            }
+        })
+    }
+
     return (
         <>
             <DropdownMenu.Root>
@@ -34,7 +72,7 @@ export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
                             </div>
                         </DropdownMenu.Item>
                         <DropdownMenu.Item className="group text-base leading-none text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none">
-                            <button onClick={() => { }}>
+                            <button onClick={() => deleteTask()}>
                                 Usuń użytkownika{' '}
                             </button>
                             <div className="ml-auto pl-[20px] text-mauve11 group-data-[highlighted]:text-white group-data-[disabled]:text-mauve8">

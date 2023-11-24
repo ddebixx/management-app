@@ -14,7 +14,7 @@ export default function UserContextProvider({ children }: { children: React.Reac
     const [user, setUser] = useState<UserDetails | null>(null);
     const saveUser = (user: UserDetails | null) => {
         setUser(user);
-        localStorage.setItem('user', JSON.stringify(user));
+        // localStorage.setItem('user', JSON.stringify(user));
     }
 
     const getUser = () => {
@@ -22,11 +22,11 @@ export default function UserContextProvider({ children }: { children: React.Reac
             return user;
         }
 
-        const localStorageUser = localStorage.getItem('user');
+        // const localStorageUser = localStorage.getItem('user');
 
-        if (localStorageUser) {
-            return JSON.parse(localStorageUser);
-        }
+        // if (localStorageUser) {
+        //     return JSON.parse(localStorageUser);
+        // }
 
         return null;
     }

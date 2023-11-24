@@ -16,6 +16,7 @@ export const Navbar = ({ session }: { session: Session | null }) => {
                     <Link href={"/dashboard/team-members"}>TEAM MEMBERS</Link>
                     <Link href={"/dashboard/schedule"}>SCHEDULE</Link>
                     <Link href={"/dashboard/tasks"}>TASKS</Link>
+                    <Link href={"/dashboard/notes"}>NOTES</Link>
                 </div>
                 <button onClick={async () => {
                     await supabase.auth.signOut();

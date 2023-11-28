@@ -68,6 +68,38 @@ export interface Database {
           }
         ]
       }
+      notes: {
+        Row: {
+          content: Json | null
+          created_at: string
+          id: number
+          title: string | null
+          user_id: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          id?: number
+          title?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          id?: number
+          title?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       recruitment: {
         Row: {
           application_date: string | null

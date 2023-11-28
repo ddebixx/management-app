@@ -1,12 +1,6 @@
 import React from 'react';
 
-type LeafProps = {
-    attributes: any;
-    children: React.ReactNode;
-    leaf: any;
-};
-
-export const Leaf = ({ attributes, children, leaf }: LeafProps) => {
+export const Leaf = ({ attributes, children, leaf }: any) => {
     if (leaf.bold) {
         children = <strong className="font-bold">{children}</strong>
     }

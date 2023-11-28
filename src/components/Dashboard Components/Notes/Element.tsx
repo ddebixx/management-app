@@ -1,12 +1,6 @@
 import React from 'react';
 
-type ElementProps = {
-    attributes: any;
-    children: React.ReactNode;
-    element: { type: string };
-};
-
-export const Element = ({ attributes, children, element }: ElementProps) => {
+export const Element = ({ attributes, children, element }: any) => {
     switch (element.type) {
         case 'block-quote':
             return <blockquote {...attributes}>{children}</blockquote>;

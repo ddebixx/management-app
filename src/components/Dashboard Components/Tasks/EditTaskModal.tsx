@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/types/supabase'
 import { Modal } from '@/components/Modal'
-import Swal from 'sweetalert2'
+import { Database } from '@/types/supabase'
 
 
 export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {

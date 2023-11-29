@@ -1,15 +1,8 @@
-
 "use client"
 
 import React, { useCallback, useEffect, useState } from 'react'
-// import isHotkey from 'is-hotkey'
-// import { Editable, withReact, Slate } from 'slate-react'
-// import { BaseEditor, Editor, createEditor, Descendant } from 'slate'
-// import { withHistory } from 'slate-history'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-// import { Element } from '@/components/Dashboard Components/Notes/Element'
-// import { Leaf } from '@/components/Dashboard Components/Notes/Leaf'
-// import { Note } from '@mui/icons-material'
+import { Note } from '@mui/icons-material'
 import { Database } from '@/types/supabase'
 import { Text } from 'slate'
 
@@ -80,9 +73,6 @@ export const NoteEditor = ({ session }: { session: Session | null }) => {
     const user = session?.user
     const id = window.location.pathname.split("/")[3]
 
-    const stringifiedData = JSON.stringify(isData.map((note) => note.content))
-    const parsedData = JSON.parse(stringifiedData)
-
     const getNote = useCallback(async () => {
         try {
             setLoading(true);
@@ -109,6 +99,8 @@ export const NoteEditor = ({ session }: { session: Session | null }) => {
     useEffect(() => {
         getNote()
     }, [user, getNote])
+
+    
 
     return (
         <div>

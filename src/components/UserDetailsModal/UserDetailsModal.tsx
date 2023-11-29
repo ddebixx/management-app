@@ -65,10 +65,8 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                         role: role ?? ''
                     },
                 ]);
-            if (error) throw error
-            alert('Profile updated!')
         } catch (error) {
-            alert('Error updating the data!')
+            throw error;
         } finally {
             setLoading(false)
         }

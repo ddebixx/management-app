@@ -3,55 +3,58 @@
 import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
+import { useMutation, useQueryClient } from 'react-query'
 
 
 export default function AddMemberModal({ session }: { session: Session | null }) {
     const supabase = createClientComponentClient<Database>()
-    const [loading, setLoading] = useState(true)
     const [fullname, setFullname] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
     const [position, setPosition] = useState<string | null>(null)
     const [startDate, setStartDate] = useState<Date | null>(null)
     const [contract, setContract] = useState<string | null>(null)
     const [role, setRole] = useState<string | null>(null)
+    const queryClient = useQueryClient();
 
-    async function addMember({
-        fullname,
-        email,
-        contract,
-        position,
-        role,
-        workStart
-    }: {
-        fullname: string | null;
-        email: string | null;
-        role: string | null;
-        contract: string | null;
-        position: string | null;
-        workStart: Date | null;
-    }) {
-
-        try {
-            setLoading(true)
-
-            const { error } = await supabase.from('subordinates').upsert([
-                {
-                    email: email ?? '',
-                    full_name: fullname ?? '',
-                    role: role ?? '',
-                    contract: contract ?? '',
-                    position: position ?? '',
-                    work_start: workStart ?? '',
-                },
-            ]);
-            if (error) throw error
-            alert('Profile updated!')
-        } catch (error) {
-            alert('Error updating the data!')
-        } finally {
-            setLoading(false)
+    const addMember = useMutation(
+        async ({
+            fullname,
+            email,
+            contract,
+            position,
+            role,
+            workStart
+        }: {
+            fullname: string | null;
+            email: string | null;
+            role: string | null;
+            contract: string | null;
+            position: string | null;
+            workStart: Date | null;
+        }) => {
+            await supabase
+                .from('subordinates')
+                .upsert([
+                    {
+                        email: email ?? '',
+                        full_name: fullname ?? '',
+                        role: role ?? '',
+                        contract: contract ?? '',
+                        position: position ?? '',
+                        work_start: workStart ?? '',
+                    },
+                ])
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['subordinates', session?.user?.id])
+                alert('Profile updated!')
+            },
+            onError: () => {
+                alert('Error updating the data!')
+            },
         }
-    }
+    );
 
     return (
         <>
@@ -115,7 +118,7 @@ export default function AddMemberModal({ session }: { session: Session | null })
                         <button
                             className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
                             onClick={async () => {
-                                addMember({ fullname, email, role, contract: '', position: '', workStart: new Date() })
+                                await addMember.mutateAsync({ fullname, email, role, contract: '', position: '', workStart: new Date() })
                                 const { data, error } = await supabase.auth.signInWithOtp({
                                     email: email as string,
                                     options: {

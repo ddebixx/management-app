@@ -3,6 +3,7 @@
 import { Database } from "@/types/supabase";
 import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 type Members = Database["public"]["Tables"]["subordinates"]["Row"]
 
@@ -11,16 +12,15 @@ export const TeamMemberCard = ({ session }: { session: Session | null }) => {
     const [isData, setIsData] = useState<Members[]>([])
     const [loading, setLoading] = useState(true);
     const user = session?.user;
-    
-    const getMembers = useCallback(async () => {
-        try {
-            setLoading(true);
 
+    const { data: memberData, isLoading, isError } = useQuery(
+        ['subordinates', user?.id],
+        async () => {
             const { data, error, status } = await supabase
-            .from("subordinates")
-            .select("*")
-            .eq("manager_id", user?.id as string);
-        
+                .from("subordinates")
+                .select("*")
+                .eq("manager_id", user?.id as string);
+
             if (error && status !== 406) {
                 throw error;
             }
@@ -28,16 +28,8 @@ export const TeamMemberCard = ({ session }: { session: Session | null }) => {
             if (data) {
                 setIsData(data);
             }
-        } catch (error) {
-            alert("Error loading user data!");
-        } finally {
-            setLoading(false);
-        }
-    }, [user, supabase]);
-
-    useEffect(() => {
-        getMembers();
-    }, [getMembers, user]);
+        },
+    );
 
     return (
         <>

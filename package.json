@@ -41,6 +41,7 @@
     "react-hook-form": "^7.48.2",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.11.0",
+    "react-query": "^3.39.3",
     "rehype-parse": "^9.0.0",
     "slate-history": "^0.100.0",
     "slate-react": "^0.101.1",

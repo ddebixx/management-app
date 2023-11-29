@@ -72,7 +72,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                 setIsData(data);
             }
         } catch (error) {
-            alert("Error loading user data!");
+            throw error;
         } finally {
             setLoading(false);
         }

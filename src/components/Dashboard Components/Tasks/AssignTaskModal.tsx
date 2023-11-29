@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/supabase'
@@ -10,17 +10,14 @@ type Members = Database["public"]["Tables"]["subordinates"]["Row"]
 
 export default function AssignTasksModal({ session }: { session: Session | null }) {
     const supabase = createClientComponentClient<Database>()
-    const [loading, setLoading] = useState(true)
     const [managerName, setManagerName] = useState<string | null>(null)
     const [expiryDate, setExpiryDate] = useState<string | null>(null)
     const [taskName, setTaskName] = useState<string | null>(null)
     const [taskDescription, setTaskDescription] = useState<string | null>(null)
-    const [assignmentDate, setAssignmentDate] = useState<string | null>(null)
     const [isData, setIsData] = useState<Members[]>([])
     const [selectedWorkerId, setSelectedWorkerId] = useState<string | null>(null);
     const [selectedWorkerName, setSelectedWorkerName] = useState<string | null>(null);
     const user = session?.user
-    const router = useRouter();
     const queryClient = useQueryClient();
 
     const { data: workerData, isLoading, isError } = useQuery(
@@ -41,56 +38,6 @@ export default function AssignTasksModal({ session }: { session: Session | null 
             }
         },
     );
-
-
-    // async function updateTask({
-    //     managerName,
-    //     assignmentDate,
-    //     expiryDate,
-    //     managerId = user?.id,
-    //     workerId,
-    //     workerName,
-    //     taskName,
-    //     taskDescription
-    // }: {
-    //     managerName: string | null | undefined;
-    //     assignmentDate: string | null | undefined;
-    //     expiryDate: string | null | undefined;
-    //     workerName: string | null | undefined;
-    //     managerId: string | null | undefined;
-    //     workerId: string | null | undefined;
-    //     taskName: string | null | undefined;
-    //     taskDescription: string | null | undefined;
-    // }) {
-    //     if (!session?.user) {
-    //         router.push('/home');
-    //     }
-
-    //     try {
-    //         setLoading(true)
-
-    //         const { error } = await supabase
-    //             .from('tasks')
-    //             .upsert([
-    //                 {
-    //                     manager_name: managerName ?? '',
-    //                     assignment_date: assignmentDate ?? '',
-    //                     expiry_date: expiryDate ?? '',
-    //                     assigned_manager: managerId ?? '',
-    //                     assigned_worker: workerId ?? '',
-    //                     task_name: taskName ?? '',
-    //                     task_description: taskDescription ?? '',
-    //                     worker_name: workerName ?? ''
-    //                 }
-    //             ])
-    //             .eq('id', user?.id as string);
-
-
-
-    //     } catch (error) {
-    //         throw error;
-    //     }
-    // }
 
     const updateTaskMutation = useMutation(
         async ({

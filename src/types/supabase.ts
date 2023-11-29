@@ -103,22 +103,25 @@ export interface Database {
       recruitment: {
         Row: {
           application_date: string | null
+          email: string | null
           full_name: string | null
-          id: string
+          id: number
           position: string | null
           status: string
         }
         Insert: {
           application_date?: string | null
+          email?: string | null
           full_name?: string | null
-          id?: string
+          id: number
           position?: string | null
           status: string
         }
         Update: {
           application_date?: string | null
+          email?: string | null
           full_name?: string | null
-          id?: string
+          id?: number
           position?: string | null
           status?: string
         }

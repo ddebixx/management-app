@@ -8,7 +8,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { DateSelectArg, EventApi, EventClickArg } from "@fullcalendar/core"
 import { renderEventContent, handleEvents } from "@/actions/calendar/EventHandlers"
 import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
 import Swal from "sweetalert2"
 import { Database } from "@/types/supabase"
 import { useMutation, useQuery, useQueryClient } from "react-query"
@@ -39,8 +39,6 @@ export default function Schedule({ session }: { session: Session | null }) {
       }
     },
   );
-
-
 
 
   const addHoursMutation = useMutation(

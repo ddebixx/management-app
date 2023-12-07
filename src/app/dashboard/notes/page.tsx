@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar";
-import { AddNoteModal } from "@/components/Dashboard Components/Notes/Editor";
+import { AddNoteModal } from "@/components/Dashboard Components/Notes/AddNoteModal";
 import { Notes } from "@/components/Dashboard Components/Notes/Notes";
 import { Database } from "@/types/supabase";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";

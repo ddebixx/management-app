@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Modal } from '@/components/Modal'
 import { Database } from '@/types/supabase'
+import { useModal } from '@/hooks/useModal'
 
 
 export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
@@ -12,15 +13,14 @@ export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
     const [expiryDate, setExpiryDate] = useState<string | null>(null)
     const [taskName, setTaskName] = useState<string | null>(null)
     const [taskDescription, setTaskDescription] = useState<string | null>(null)
-    const [isOpen, setIsOpen] = useState(false)
+    const { isOpen, onOpen, onClose } = useModal();
 
     useEffect(() => {
         if (taskToEdit) {
-            setIsOpen(true);
+          onOpen();
         }
-    })
-
-    console.log(taskToEdit);
+      }, [taskToEdit, onOpen]);
+    
 
     async function updateTask({
         status,
@@ -115,7 +115,7 @@ export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
     return (
         <>
             <Modal isOpen={isOpen}
-                onClose={() => setIsOpen(false)}
+                onClose={onClose}
                 title="Edit task"
                 body={bodyContent}
             />

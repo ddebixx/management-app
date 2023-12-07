@@ -14,6 +14,8 @@ import {
 import { ArrowLeft, ArrowRight, Search } from "@mui/icons-material";
 import { DropDownMenu } from "./DropDownMenu";
 import EditTaskModal from "./EditTaskModal";
+import { useQuery, useQueryClient } from "react-query";
+import { useModal } from "@/hooks/useModal";
 
 type Tasks = Database["public"]["Tables"]["tasks"]["Row"]
 
@@ -26,6 +28,8 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
     const user = session?.user;
     const columnHelper = createColumnHelper();
     const [globalFilter, setGlobalFilter] = useState("");
+    const queryClient = useQueryClient();
+
     const getUserRole = useCallback(async () => {
         try {
             setLoading(true);
@@ -82,11 +86,28 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
         getUserRole();
     }, [getUserRole, user]);
 
-    useEffect(() => {
-        if (role) {
-            getTasks();
-        }
-    }, [getTasks, role, user]);
+    const useTasksQuery = ({ user, supabase, role }: any) => {
+        return useQuery(['tasks', user?.id, role], async () => {
+            const { data, error, status } = await supabase
+                .from('tasks')
+                .select('*')
+                .eq(role === 'Project manager' ? 'assigned_manager' : 'assigned_worker', user?.id as string);
+
+            if (error && status !== 406) {
+                throw error;
+            }
+
+            if (data) {
+                setIsData(data);
+                queryClient.invalidateQueries(['tasks']);
+            }
+
+            return data;
+        });
+    };
+
+    const { data: tasksData, isLoading, isError } = useTasksQuery({ user, supabase, role });
+
     const generateColumns = (): any[] => {
         if (isData.length === 0) {
             return [];

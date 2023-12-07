@@ -9,6 +9,7 @@ import { Element } from './Element'
 import { Leaf } from './Leaf'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
+import { useMutation, useQueryClient } from 'react-query'
 
 const HOTKEYS = {
     'cmd+b': 'bold',
@@ -45,9 +46,7 @@ const initialValue = [
 ]
 
 export const AddNoteModal = ({ session }: { session: Session | null }) => {
-
     const supabase = createClientComponentClient<Database>()
-    const [loading, setLoading] = useState(true)
     const user = session?.user
     const [title, setTitle] = useState<string | null>(null)
     const [value, setValue] = useState(initialValue)
@@ -55,6 +54,7 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
     const renderLeaf = useCallback((props: React.JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => <Leaf {...props} />, [])
     const editor = useMemo(() => withHistory(withReact(createEditor())), [])
     const [currentMark, setCurrentMark] = useState(null)
+    const queryClient = useQueryClient();
 
     const toggleMark = (editor: BaseEditor, format: string) => {
         const isActive = isMarkActive(editor, format)
@@ -95,20 +95,16 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
         );
     };
 
-    async function addNote({
-        title,
-        content,
-        user_id
-    }: {
-        title: string | null | undefined;
-        content: string | null | undefined;
-        user_id: string | null | undefined;
-    }) {
-
-        try {
-            setLoading(true)
-
-            const { error } = await supabase
+    const { mutateAsync: addNote } = useMutation(
+        async ({
+            title,
+            content,
+        }: {
+            title: string | null | undefined;
+            content: string | null | undefined;
+            user_id: string | null | undefined;
+        }) => {
+            await supabase
                 .from('notes')
                 .insert([
                     {
@@ -118,17 +114,17 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
                         created_at: new Date() as any,
                     },
                 ])
-
-            if (error) {
-                throw error
-            }
-
-        } catch (error) {
-            throw error
-        } finally {
-            setLoading(false)
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['notes', user?.id]);
+            },
+            onError: (error) => {
+                throw error;
+            },
         }
-    }
+    );
+
 
     return (
         <>
@@ -194,59 +190,3 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
         </>
     )
 }
-
-
-// import React, { useEffect, useRef } from "react";
-// import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-
-// interface CKeditorProps {
-//   onChange: (data: string) => void;
-//   editorLoaded: boolean;
-//   name: string;
-//   value: string;
-// }
-
-// export default function CKeditor({
-//   onChange,
-//   editorLoaded,
-//   name,
-//   value,
-// }: CKeditorProps) {
-//   const editorRef = useRef<{ CKEditor: typeof CKEditor; ClassicEditor: typeof ClassicEditor }>();
-//   useEffect(() => {
-//     editorRef.current = {
-//       CKEditor: require("@ckeditor/ckeditor5-react").CKEditor,
-//       ClassicEditor: require("@ckeditor/ckeditor5-build-classic"),
-//     };
-//   }, []);
-
-//   return (
-//     <>
-//       {editorLoaded ? (
-//         <CKEditor
-//           editor={ClassicEditor}
-//           data={value}
-//           onChange={(event: any, editor: any) => {
-//             const data = editor.getData();
-//             onChange(data);
-//           }}
-//           config={{
-//             toolbar: [
-//               "heading",
-//               "|",
-//               "bold",
-//               "italic",
-//               "link",
-//               "bulletedList",
-//               "numberedList",
-//               "blockQuote",
-//             ],
-//           }}
-//         />
-//       ) : (
-//         <div>Editor loading</div>
-//       )}
-//     </>
-//   );
-// }

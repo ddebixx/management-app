@@ -2,7 +2,7 @@
 
 import { Database } from "@/types/supabase";
 import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 
 type Members = Database["public"]["Tables"]["subordinates"]["Row"]
@@ -28,20 +28,24 @@ export const TeamMemberCard = ({ session }: { session: Session | null }) => {
             if (data) {
                 setIsData(data);
             }
+
+            setLoading(false);
         },
     );
+
+    console.log(user?.id);
 
     return (
         <>
             <div>
-                
-                    {isData.map((member) => (
-                        <div key={user?.id}>
-                            <p>{member.full_name}</p>
-                            <p>{member.email}</p>
-                        </div>
-                    ))}
-               
+                {loading && <div>Loading...</div>}
+                {isData.map((member) => (
+                    <div key={user?.id}>
+                        <p>{member.full_name}</p>
+                        <p>{member.email}</p>
+                    </div>
+                ))}
+
             </div>
         </>
     )

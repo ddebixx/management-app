@@ -1,10 +1,11 @@
 "use client"
 
-import React, { useCallback, useEffect, useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Note } from '@mui/icons-material'
 import { Database } from '@/types/supabase'
 import { Text } from 'slate'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import Swal from 'sweetalert2'
+import { useRouter } from 'next/navigation'
 
 const serialize = (node) => {
     if (Text.isText(node)) {
@@ -64,61 +65,97 @@ const serialize = (node) => {
     }
 }
 
-type Note = Database["public"]["Tables"]["notes"]["Row"]
-
 export const NoteEditor = ({ session }: { session: Session | null }) => {
-    const supabase = createClientComponentClient<Database>()
-    const [loading, setLoading] = useState(true)
-    const [isData, setIsData] = useState<Note[]>([])
-    const user = session?.user
-    const id = window.location.pathname.split("/")[3]
+    const supabase = createClientComponentClient<Database>();
+    const id = window.location.pathname.split("/")[3];
+    const queryClient = useQueryClient();
+    const router = useRouter();
 
-    const getNote = useCallback(async () => {
-        try {
-            setLoading(true);
+    const { data: notesData, isLoading, isError } = useQuery(['note', id], async () => {
+        const { data, error, status } = await supabase
+            .from("notes")
+            .select("*")
+            .eq("id", id as string);
 
-            const { data, error, status } = await supabase
-                .from("notes")
-                .select("*")
-                .eq("id", id as string);
-
-            if (error && status !== 406) {
-                throw error;
-            }
-
-            if (data) {
-                setIsData(data);
-            }
-        } catch (error) {
+        if (error && status !== 406) {
             throw error;
-        } finally {
-            setLoading(false);
         }
-    }, [user, supabase]);
 
-    useEffect(() => {
-        getNote()
-    }, [user, getNote])
+        return data;
+    });
 
-    
+    const deleteNoteMutation = useMutation(
+        async (noteId: string) => {
+            await supabase
+                .from("notes")
+                .delete()
+                .eq("id", noteId as string);
+        },
+        {
+            onSuccess: () => {
+                Swal.fire({
+                    title: "Deleted!",
+                    text: "Your note has been deleted.",
+                    icon: "success",
+                    confirmButtonText: "Cool",
+                });
+                router.push("/dashboard/notes");
+                queryClient.invalidateQueries(['note', id]);
+            },
+            onError: () => {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Something went wrong.",
+                    icon: "error",
+                    timer: 1000
+                });
+            }
+        }
+    )
+
+    const handleNoteDelete = async (noteId: string) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "Cancel",
+            showLoaderOnConfirm: true,
+            preConfirm: async () => {
+                await deleteNoteMutation.mutateAsync(noteId);
+            },
+        });
+    }
 
     return (
         <div>
-            {loading ? (
+            {isLoading ? (
                 <p>Loading...</p>
-            ) : isData.length > 0 ? (
+            ) : isError ? (
+                <p>Error loading data.</p>
+            ) : notesData && notesData.length > 0 ? (
                 <div>
-                    {isData.map((note) => (
+                    {notesData.map((note) => (
                         <div key={note.id}>
-                            {note.content.map((node, index) => (
-                                <div key={index}>{serialize(node)}</div>
-                            ))}
+                            {Array.isArray(note.content) ? (
+                                note.content.map((node, index) => (
+                                    <div key={index}>{serialize(node)}</div>
+                                ))
+                            ) : (
+                                <p>No content available for this note.</p>
+                            )}
                         </div>
                     ))}
                 </div>
             ) : (
                 <p>No data available.</p>
             )}
+            {/* <AddNoteModal session={session} /> */}
+            <button
+                onClick={() => handleNoteDelete(id)}>
+                DELETE
+            </button>
         </div>
     );
-}
+};

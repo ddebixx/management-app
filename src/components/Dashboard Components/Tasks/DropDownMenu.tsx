@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Swal from 'sweetalert2';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
+import { useMutation, useQueryClient } from 'react-query';
 
 export interface DropDownMenuProps {
     setTaskToEdit: (taskId: any) => void;
@@ -14,7 +15,71 @@ export interface DropDownMenuProps {
 
 export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
     const supabase = createClientComponentClient<Database>();
-    const deleteTask = async () => {
+    const queryClient = useQueryClient();
+    // const deleteTask = async () => {
+    //     Swal.fire({
+    //         title: 'Are you sure?',
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonText: 'Delete',
+    //         cancelButtonText: 'Cancel',
+    //         showLoaderOnConfirm: true,
+    //     }).then(async (result) => {
+    //         if (result.isConfirmed) {
+    //             try {
+    //                 await supabase.from('tasks')
+    //                     .delete()
+    //                     .eq('id', taskId);
+    //                 Swal.fire({
+    //                     title: 'Deleted!',
+    //                     text: 'Your task has been deleted.',
+    //                     icon: 'success',
+    //                     showConfirmButton: false,
+    //                     timer: 1000
+    //                 })
+    //             } catch (error) {
+    //                 Swal.fire({
+    //                     title: 'Error!',
+    //                     text: 'Something went wrong.',
+    //                     icon: 'error',
+    //                     showConfirmButton: false,
+    //                     timer: 1000
+    //                 })
+    //             }
+    //         }
+    //     })
+    // }
+
+    const deleteTaskMutation = useMutation(
+        async (taskId: number) => {
+            await supabase.from('tasks')
+                .delete()
+                .eq('id', taskId);
+        },
+        {
+            onSuccess: () => {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'Your task has been deleted.',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+                queryClient.invalidateQueries(['tasks']);
+            },
+            onError: () => {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Something went wrong.',
+                    icon: 'error',
+                    showConfirmButton: false,
+                    timer: 1000
+                })
+            },
+        }
+    );
+
+    const deleteTask = () => {
         Swal.fire({
             title: 'Are you sure?',
             icon: 'warning',
@@ -24,28 +89,9 @@ export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
             showLoaderOnConfirm: true,
         }).then(async (result) => {
             if (result.isConfirmed) {
-                try {
-                    await supabase.from('tasks')
-                        .delete()
-                        .eq('id', taskId);
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: 'Your task has been deleted.',
-                        icon: 'success',
-                        showConfirmButton: false,
-                        timer: 1000
-                    })
-                } catch (error) {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Something went wrong.',
-                        icon: 'error',
-                        showConfirmButton: false,
-                        timer: 1000
-                    })
-                }
+                deleteTaskMutation.mutate(taskId);
             }
-        })
+        });
     }
 
     return (
@@ -65,7 +111,7 @@ export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
                             <button onClick={() => {
                                 setTaskToEdit(taskId);
                             }}>
-                                Edytuj dane{' '}
+                                Edit Task{' '}
                             </button>
                             <div className="ml-auto pl-[20px]">
                                 <EditIcon />
@@ -73,7 +119,7 @@ export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
                         </DropdownMenu.Item>
                         <DropdownMenu.Item className="group text-base leading-none text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none">
                             <button onClick={() => deleteTask()}>
-                                Usuń użytkownika{' '}
+                                Delete Task{' '}
                             </button>
                             <div className="ml-auto pl-[20px] text-mauve11 group-data-[highlighted]:text-white group-data-[disabled]:text-mauve8">
                                 <DeleteIcon />

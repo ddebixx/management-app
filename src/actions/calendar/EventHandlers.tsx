@@ -1,10 +1,6 @@
 "use client"
 
-import { Database } from "@/types/supabase"
-import { EventApi, EventClickArg, EventContentArg } from "@fullcalendar/core"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useMutation, useQueryClient } from "react-query"
-import Swal from "sweetalert2"
+import { EventApi, EventContentArg } from "@fullcalendar/core"
 
 
 

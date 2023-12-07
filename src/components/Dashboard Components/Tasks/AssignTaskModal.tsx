@@ -41,52 +41,53 @@ export default function AssignTasksModal({ session }: { session: Session | null 
 
     const updateTaskMutation = useMutation(
         async ({
-            managerName,
-            assignmentDate,
-            expiryDate,
-            managerId = user?.id,
-            workerId,
-            workerName,
-            taskName,
-            taskDescription,
-            taskStatus
+          managerName,
+          assignmentDate,
+          expiryDate,
+          managerId = user?.id,
+          workerId,
+          workerName,
+          taskName,
+          taskDescription,
+          taskStatus,
         }: {
-            managerName: string | null | undefined;
-            assignmentDate: string | null | undefined;
-            expiryDate: string | null | undefined;
-            workerName: string | null | undefined;
-            managerId: string | null | undefined;
-            workerId: string | null | undefined;
-            taskName: string | null | undefined;
-            taskDescription: string | null | undefined;
-            taskStatus: string | null | undefined;
+          managerName: string | null | undefined;
+          assignmentDate: string | null | undefined;
+          expiryDate: string | null | undefined;
+          workerName: string | null | undefined;
+          managerId: string | null | undefined;
+          workerId: string | null | undefined;
+          taskName: string | null | undefined;
+          taskDescription: string | null | undefined;
+          taskStatus: string | null | undefined;
         }) => {
-            await supabase
-                .from('tasks')
-                .upsert([
-                    {
-                        manager_name: managerName ?? '',
-                        assignment_date: assignmentDate ?? '',
-                        expiry_date: expiryDate ?? '',
-                        assigned_manager: managerId ?? '',
-                        assigned_worker: workerId ?? '',
-                        task_name: taskName ?? '',
-                        task_description: taskDescription ?? '',
-                        worker_name: workerName ?? '',
-                        task_status: taskStatus ?? ''
-                    }
-                ])
-                .eq('id', user?.id as string);
+          await supabase
+            .from('tasks')
+            .upsert([
+              {
+                manager_name: managerName ?? '',
+                assignment_date: assignmentDate ?? '',
+                expiry_date: expiryDate ?? '',
+                assigned_manager: managerId ?? '',
+                assigned_worker: workerId ?? '',
+                task_name: taskName ?? '',
+                task_description: taskDescription ?? '',
+                worker_name: workerName ?? '',
+                task_status: taskStatus ?? '',
+              },
+            ])
+            .eq('id', user?.id as string);
         },
         {
-            onSuccess: () => {
-                queryClient.invalidateQueries(['tasks', user?.id]);
-            },
-            onError: (error) => {
-                throw error;
-            },
+          onSuccess: () => {
+            queryClient.invalidateQueries(['tasks', user?.id]);
+          },
+          onError: (error) => {
+            throw error;
+          },
         }
-    );
+      );
+      
 
     return (
         <>
@@ -142,6 +143,7 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                             setSelectedWorkerName(selectedName);
                         }}
                     >
+                        <option value="">Select worker</option>
                         {isData.map((member) => (
                             <option key={member.id} value={member.id}>{member.full_name}</option>
                         ))}

@@ -3,19 +3,20 @@
 import { Database } from "@/types/supabase"
 import { Session, createClientComponentClient, } from "@supabase/auth-helpers-nextjs"
 import Link from "next/link"
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
+import { useQuery, useQueryClient } from "react-query"
 
 type Notes = Database["public"]["Tables"]["notes"]["Row"]
 
 export const Notes = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>()
     const user = session?.user
-    const [loading, setLoading] = useState(true)
     const [isData, setIsData] = useState<Notes[]>([])
-    const getNotes = useCallback(async () => {
-        try {
-            setLoading(true);
+    const queryClient = useQueryClient();
 
+    const { data: notesData, isLoading, isError } = useQuery(
+        ['notes', user?.id],
+        async () => {
             const { data, error, status } = await supabase
                 .from("notes")
                 .select("*")
@@ -27,17 +28,10 @@ export const Notes = ({ session }: { session: Session | null }) => {
 
             if (data) {
                 setIsData(data);
+                queryClient.invalidateQueries(['notes', user?.id]);
             }
-        } catch (error) {
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, [user, supabase])
-
-    useEffect(() => {
-        getNotes()
-    }, [user, getNotes])
+        },
+    );
 
     return (
         <>
@@ -55,14 +49,6 @@ export const Notes = ({ session }: { session: Session | null }) => {
                                     <p className="text-gray-700 text-base">
                                         {note.title}
                                     </p>
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
-                                        Content
-                                    </label>
-                                    {/* <p className="text-gray-700 text-base">
-                                        {note.content as string}
-                                    </p> */}
                                 </div>
                                 <div className="mb-4">
                                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="createdAt">

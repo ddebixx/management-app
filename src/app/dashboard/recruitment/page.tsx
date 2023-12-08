@@ -16,7 +16,6 @@ export default async function TasksPage () {
         <>
             <div>
                 <Navbar session={session} />
-                <EditCandidateModal session={session} />
                 <AddCandidateModal session={session} />
                 <CandidateCard session={session} />
             </div>

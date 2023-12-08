@@ -6,7 +6,7 @@ interface ModalProps {
     onClose: () => void;
 }
 
-export const useModal = create<ModalProps>((set) => ({
+export const useSecondModal = create<ModalProps>((set) => ({
     isOpen: false,
     onOpen: () => set({ isOpen: true }),
     onClose: () => set({ isOpen: false })

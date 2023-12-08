@@ -7,21 +7,22 @@ import Swal from 'sweetalert2';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { useMutation, useQueryClient } from 'react-query';
+import { EditCandidateModal } from './EditCandidateModal';
 
 export interface DropDownMenuProps {
-    setTaskToEdit: (taskId: any) => void;
-    taskId: number;
+    setCandidateId: (candidateId: any) => void;
+    candidateId: number | null;
 }
 
-export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
+export const DropDownMenu = ({ candidateId, setCandidateId }: DropDownMenuProps) => {
     const supabase = createClientComponentClient<Database>();
     const queryClient = useQueryClient();
 
     const deleteTaskMutation = useMutation(
-        async (taskId: number) => {
-            await supabase.from('tasks')
+        async (candidateId: number) => {
+            await supabase.from('recruitment')
                 .delete()
-                .eq('id', taskId);
+                .eq('id', candidateId);
         },
         {
             onSuccess: () => {
@@ -56,7 +57,7 @@ export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
             showLoaderOnConfirm: true,
         }).then(async (result) => {
             if (result.isConfirmed) {
-                deleteTaskMutation.mutate(taskId);
+                deleteTaskMutation.mutate(candidateId ?? 0);
             }
         });
     }
@@ -76,9 +77,9 @@ export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
                         sideOffset={5}>
                         <DropdownMenu.Item className="group text-base text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none data-[disabled]:pointer-events-none">
                             <button onClick={() => {
-                                setTaskToEdit(taskId);
+                                setCandidateId(candidateId);
                             }}>
-                                Edit Task
+                                Edit Candidate
                             </button>
                             <div className="ml-auto pl-[20px]">
                                 <EditIcon />
@@ -86,7 +87,7 @@ export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
                         </DropdownMenu.Item>
                         <DropdownMenu.Item className="group text-base leading-none text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none">
                             <button onClick={() => deleteTask()}>
-                                Delete Task
+                                Delete Candidate{' '}
                             </button>
                             <div className="ml-auto pl-[20px] text-mauve11 group-data-[highlighted]:text-white group-data-[disabled]:text-mauve8">
                                 <DeleteIcon />

@@ -5,6 +5,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Modal } from '@/components/Modal'
 import { Database } from '@/types/supabase'
 import { useModal } from '@/hooks/useModal'
+import { useMutation, useQueryClient } from 'react-query'
 
 
 export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
@@ -14,53 +15,63 @@ export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
     const [taskName, setTaskName] = useState<string | null>(null)
     const [taskDescription, setTaskDescription] = useState<string | null>(null)
     const { isOpen, onOpen, onClose } = useModal();
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (taskToEdit) {
-          onOpen();
+            onOpen();
         }
-      }, [taskToEdit, onOpen]);
-    
+    }, [taskToEdit, onOpen]);
 
-    async function updateTask({
-        status,
-        expiryDate,
-        taskName,
-        taskDescription,
-        taskToEdit
-    }: {
-        status: string | null | undefined;
-        expiryDate: string | null | undefined;
-        taskName: string | null | undefined;
-        taskDescription: string | null | undefined;
-        taskToEdit: number;
-    }) {
-        try {
-            const { error } = await supabase
-                .from('tasks')
+    const updateTaskMutation = useMutation(
+        ["tasks"],
+        async ({
+            status,
+            expiryDate,
+            taskName,
+            taskDescription,
+            taskToEdit,
+        }: {
+            status: string | null | undefined;
+            expiryDate: string | null | undefined;
+            taskName: string | null | undefined;
+            taskDescription: string | null | undefined;
+            taskToEdit: number;
+        }) => {
+            await supabase
+                .from("tasks")
                 .update({
-                    task_status: status ?? '',
-                    expiry_date: expiryDate ?? '',
-                    task_name: taskName ?? '',
-                    task_description: taskDescription ?? '',
+                    task_status: status ?? "",
+                    expiry_date: expiryDate ?? "",
+                    task_name: taskName ?? "",
+                    task_description: taskDescription ?? "",
                 })
-                .eq('id', taskToEdit);
-        } catch (error) {
-            throw error;
+                .eq("id", taskToEdit);
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(["tasks"]);
+                onClose();
+            },
         }
-    }
+    );
 
     const bodyContent = (
         <div className="form-widget">
             <div>
-                <input
+                Status
+                <select
                     className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
                     id="taskStatus"
-                    type="text"
-                    placeholder='Status'
                     value={status || ''}
                     onChange={(e) => setStatus(e.target.value)}
-                />
+                >
+                    <option value=""></option>
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="COMPLETED">COMPLETED</option>
+                    <option value="CANCELED">CANCELED</option>
+                    <option value="EXPIRED">EXPIRED</option>
+                </select>
             </div>
             <div>
                 <input
@@ -96,15 +107,14 @@ export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
             <div>
                 <button
                     className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
-                    onClick={async () => {
-                        await updateTask({
-                            status,
-                            expiryDate,
-                            taskName,
-                            taskDescription,
-                            taskToEdit
-                        });
-                    }}
+                    onClick={async () => updateTaskMutation.mutateAsync({
+                        status,
+                        expiryDate,
+                        taskName,
+                        taskDescription,
+                        taskToEdit
+                    })
+                    }
                 >
                     Edit
                 </button>

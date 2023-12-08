@@ -33,8 +33,6 @@ export const TeamMemberCard = ({ session }: { session: Session | null }) => {
         },
     );
 
-    console.log(user?.id);
-
     return (
         <>
             <div>

@@ -6,8 +6,8 @@ import { ModalProvider } from '@/providers/ModalProvider'
 import { AuthModal } from '@/components/AuthModal/AuthModal'
 import { ToasterProvider } from '@/providers/ToasterProvider'
 import { SupabaseProvider } from '@/providers/SupabaseProvider'
-import UserContextProvider from '@/hooks/useUser'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import UserContextProvider from '@/actions/userContextProvider'
 
 
 
@@ -21,8 +21,8 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body 
-      // className={GeistSans.className}
+      <body
+        // className={GeistSans.className}
       >
         <ToasterProvider />
         <SupabaseProvider>

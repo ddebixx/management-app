@@ -2,7 +2,7 @@
 
 import { Database } from "@/types/supabase";
 import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
     createColumnHelper,
     flexRender,
@@ -15,83 +15,27 @@ import { ArrowLeft, ArrowRight, Search } from "@mui/icons-material";
 import { DropDownMenu } from "./DropDownMenu";
 import EditTaskModal from "./EditTaskModal";
 import { useQuery, useQueryClient } from "react-query";
-import { useModal } from "@/hooks/useModal";
+import { useUserContext } from "@/actions/userContextProvider";
 
 type Tasks = Database["public"]["Tables"]["tasks"]["Row"]
 
 export const TasksTable = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>();
     const [isData, setIsData] = useState<Tasks[]>([])
-    const [role, setRole] = useState<string | null>(null)
     const [taskToEdit, setTaskToEdit] = useState<any | null>(null)
     const [loading, setLoading] = useState(true);
     const user = session?.user;
     const columnHelper = createColumnHelper();
     const [globalFilter, setGlobalFilter] = useState("");
     const queryClient = useQueryClient();
-
-    const getUserRole = useCallback(async () => {
-        try {
-            setLoading(true);
-
-            const { data, error, status } = await supabase
-                .from("users")
-                .select("role")
-                .eq("id", user?.id as string)
-                .single();
-
-            if (error && status !== 406) {
-                throw error;
-            }
-
-            if (data) {
-                setRole(data.role);
-            }
-        } catch (error) {
-            alert("Error loading user data!");
-        } finally {
-            setLoading(false);
-        }
-    }, [user, supabase]);
-
-    const getTasks = useCallback(async () => {
-        try {
-            setLoading(true);
-
-            let query = supabase.from("tasks").select("*");
-
-            if (role === "Project manager") {
-                query = query.eq("assigned_manager", user?.id as string);
-            } else {
-                query = query.eq("assigned_worker", user?.id as string);
-            }
-
-            const { data, error, status } = await query;
-
-            if (error && status !== 406) {
-                throw error;
-            }
-
-            if (data) {
-                setIsData(data);
-            }
-        } catch (error) {
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }, [user, supabase, role]);
-
-    useEffect(() => {
-        getUserRole();
-    }, [getUserRole, user]);
-
-    const useTasksQuery = ({ user, supabase, role }: any) => {
-        return useQuery(['tasks', user?.id, role], async () => {
+    const { userRole } = useUserContext();
+    
+    const useTasksQuery = ({ user, supabase, userRole }: any) => {
+        return useQuery(['tasks', user?.id, userRole], async () => {
             const { data, error, status } = await supabase
                 .from('tasks')
                 .select('*')
-                .eq(role === 'Project manager' ? 'assigned_manager' : 'assigned_worker', user?.id as string);
+                .eq(userRole === 'Project manager' ? 'assigned_manager' : 'assigned_worker', user?.id as string);
 
             if (error && status !== 406) {
                 throw error;
@@ -106,7 +50,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
         });
     };
 
-    const { data: tasksData, isLoading, isError } = useTasksQuery({ user, supabase, role });
+    const { data: tasksData, isLoading, isError } = useTasksQuery({ user, supabase, userRole });
 
     const generateColumns = (): any[] => {
         if (isData.length === 0) {
@@ -133,6 +77,33 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                 }),
                 columnHelper.accessor("task_status", {
                     header: "Status",
+                    cell: (row) => {
+                        const status = "task_status" in (row.row.original as any) ? (row.row.original as any).task_status : null;
+                        return (
+                            <>
+                                {status === "COMPLETED" && (
+                                    <div className="bg-green-300">
+                                        {status}
+                                    </div>
+
+                                )} {status === "ACTIVE" && (
+                                    <div className="bg-blue-300">
+                                        {status}
+                                    </div>
+
+                                )} {status === "CANCELED" && (
+                                    <div className="bg-red-300">
+                                        {status}
+                                    </div>
+
+                                )} {status === "EXPIRED" && (
+                                    <div className="bg-red-300">
+                                        {status}
+                                    </div>
+                                )}
+                            </>
+                        );
+                    }
                 }),
                 columnHelper.accessor("id", {
                     header: "",

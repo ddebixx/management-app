@@ -2,16 +2,22 @@
 
 import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
 import { Database } from '@/types/supabase'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from 'react-query'
+import { DropDownMenu } from './DropDownMenu'
+import { EditCandidateModal } from './EditCandidateModal'
 
 type Candidates = Database["public"]["Tables"]["recruitment"]["Row"]
 
-export const CandidateCard = ({ session }: { session: Session | null}) => {
+export const CandidateCard = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>()
     const [isData, setIsData] = useState<Candidates[]>([])
+    const [candidateId, setCandidateId] = useState<any | null>(null);
     const queryClient = useQueryClient();
+
+    const handleCandidateSelect = (candidateId: number) => {
+        setCandidateId(candidateId);
+    };
 
     const { data: candidateData, isLoading, isError } = useQuery(
         ['recruitment'],
@@ -33,16 +39,28 @@ export const CandidateCard = ({ session }: { session: Session | null}) => {
 
     return (
         <>
-            <div>
+            <div className='flex items-start gap-4'>
                 {isData.map((candidate) => (
-                    <div key={candidate.id}>
-                        <p>{candidate.full_name}</p>
-                        <p>{candidate.email}</p>
-                        <p>{candidate.position}</p>
-                        <p>{candidate.status}</p>
+                    <div>
+                        <div onClick={() => handleCandidateSelect(candidate.id)}>
+                            <DropDownMenu candidateId={candidateId}
+                                setCandidateId={setCandidateId}
+                            />
+                        </div>
+
+                        <div key={candidate.id}>
+                            <p>{candidate.full_name}</p>
+                            <p>{candidate.email}</p>
+                            <p>{candidate.position}</p>
+                            <p>{candidate.status}</p>
+                        </div>
                     </div>
                 ))}
             </div>
+
+            {candidateId && (
+                <EditCandidateModal candidateId={candidateId} />
+            )}
         </>
     )
 }

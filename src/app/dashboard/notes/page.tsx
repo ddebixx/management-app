@@ -19,31 +19,3 @@ export default async function NotesPage() {
         </>
     )
 }
-
-// "use client"
-
-// import CKeditor from "@/components/Dashboard Components/Notes/Editor";
-// import { useEffect, useState } from "react";
-
-// export default function NotesPage() {
-//     const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
-//     const [data, setData] = useState<string>("");
-
-//     useEffect(() => {
-//         setEditorLoaded(true);
-//     }, []);
-
-//     return (
-//         <div>
-//             <CKeditor
-//                 value={""}
-//                 name="description"
-//                 onChange={(data: string) => {
-//                     setData(data);
-//                 }}
-//                 editorLoaded={editorLoaded}
-//             />
-//             <div>{JSON.stringify(data)}</div>
-//         </div>
-//     );
-// }

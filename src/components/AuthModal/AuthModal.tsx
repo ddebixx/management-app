@@ -25,6 +25,7 @@ export const AuthModal = () => {
     useEffect(() => {
         if (session) {
             onClose()
+            router.push('/register')
         }
     }, [session, router, onClose])
 

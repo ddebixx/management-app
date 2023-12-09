@@ -4,9 +4,8 @@ import { useAuthModal } from "@/hooks/useAuthModal";
 import { AuthModal } from "../AuthModal/AuthModal";
 
 export const Navbar = () => {
-
     const authModal = useAuthModal();
-
+    
     return (
         <header className="fixed border-b bg-violet-50 w-full z-[22222222222] backdrop-blur-xl max-lg:px-8 max-[1200px]:px-8 max-[480px]:px-4">
             <nav className="m-auto flex items-center justify-between py-4 max-w-[1200px]">

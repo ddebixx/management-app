@@ -1,5 +1,4 @@
 import { Pricing } from "./Pricing"
-import Image from 'next/image'
 
 export const PricingSection = () => {
     return (

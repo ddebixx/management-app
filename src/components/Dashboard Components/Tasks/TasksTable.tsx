@@ -2,7 +2,7 @@
 
 import { Database } from "@/types/supabase";
 import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
     createColumnHelper,
     flexRender,
@@ -23,7 +23,6 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>();
     const [isData, setIsData] = useState<Tasks[]>([])
     const [taskToEdit, setTaskToEdit] = useState<any | null>(null)
-    const [loading, setLoading] = useState(true);
     const user = session?.user;
     const columnHelper = createColumnHelper();
     const [globalFilter, setGlobalFilter] = useState("");

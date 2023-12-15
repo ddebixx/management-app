@@ -1,19 +1,21 @@
 "use client"
 
-import { useState } from 'react'
-import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useEffect, useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
 import { useQuery, useQueryClient } from 'react-query'
 import { DropDownMenu } from './DropDownMenu'
 import { EditCandidateModal } from './EditCandidateModal'
+import { supabaseAdmin } from '@/lib/admin'
 
 type Candidates = Database["public"]["Tables"]["recruitment"]["Row"]
 
-export const CandidateCard = ({ session }: { session: Session | null }) => {
+export const CandidateCard = () => {
     const supabase = createClientComponentClient<Database>()
     const [isData, setIsData] = useState<Candidates[]>([])
     const [candidateId, setCandidateId] = useState<any | null>(null);
     const queryClient = useQueryClient();
+    const [pdfUrls, setPdfUrls] = useState<{ [id: string]: string }>({});
 
     const handleCandidateSelect = (candidateId: number) => {
         setCandidateId(candidateId);
@@ -37,6 +39,22 @@ export const CandidateCard = ({ session }: { session: Session | null }) => {
         },
     );
 
+    useEffect(() => {
+        isData.forEach((candidate) => {
+            if (candidate.file_path) {
+                supabaseAdmin.storage.from('CVs').download(candidate.file_path)
+                    .then(({ data, error }) => {
+                        if (error) {
+                            console.error('Error downloading file:', error.message);
+                        } else if (data) {
+                            const url = URL.createObjectURL(data);
+                            setPdfUrls((prevUrls) => ({ ...prevUrls, [candidate.id]: url }));
+                        }
+                    });
+            }
+        });
+    }, [isData]);
+
     return (
         <>
             <div className='flex items-start gap-4'>
@@ -54,9 +72,15 @@ export const CandidateCard = ({ session }: { session: Session | null }) => {
                             <p>{candidate.position}</p>
                             <p>{candidate.status}</p>
                         </div>
+                        {pdfUrls[candidate.id] && (
+                            <div>
+                                <a href={pdfUrls[candidate.id]} download={`${candidate.full_name}.pdf`}>Download PDF</a>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
+
 
             {candidateId && (
                 <EditCandidateModal candidateId={candidateId} />

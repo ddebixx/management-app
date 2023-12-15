@@ -5,13 +5,11 @@ import { Session, createClientComponentClient } from '@supabase/auth-helpers-nex
 import { Database } from '@/types/supabase'
 import { useMutation, useQueryClient } from 'react-query'
 
-
 export const AddMemberModal = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>()
     const [fullname, setFullname] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
     const [position, setPosition] = useState<string | null>(null)
-    const [startDate, setStartDate] = useState<Date | null>(null)
     const [contract, setContract] = useState<string | null>(null)
     const [role, setRole] = useState<string | null>(null)
     const queryClient = useQueryClient();
@@ -23,25 +21,27 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
             contract,
             position,
             role,
-            workStart
+            id
         }: {
             fullname: string | null;
             email: string | null;
             role: string | null;
             contract: string | null;
             position: string | null;
-            workStart: Date | null;
+            manager_id: string | undefined;
+            id: string | null;
         }) => {
             await supabase
                 .from('subordinates')
                 .upsert([
                     {
+                        id: "",
                         email: email ?? '',
                         full_name: fullname ?? '',
                         role: role ?? '',
                         contract: contract ?? '',
                         position: position ?? '',
-                        work_start: workStart ?? '',
+                        manager_id: session?.user?.id,
                     },
                 ])
         },
@@ -97,14 +97,6 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
                             placeholder='Contract'
                             onChange={(e) => setContract(e.target.value)}
                         />
-                        <input
-                            className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
-                            id="workStart"
-                            type="date"
-                            value={startDate ? startDate.toISOString().slice(0, 10) : ''}
-                            placeholder='Work start date'
-                            onChange={(e) => setStartDate(new Date(e.target.value))}
-                        />
                     </div>
                     <div>
                         <label htmlFor="Founder">Founder</label>
@@ -118,18 +110,17 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
                         <button
                             className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
                             onClick={async () => {
-                                await addMember.mutateAsync({ fullname, email, role, contract: '', position: '', workStart: new Date() })
-                                const { data, error } = await supabase.auth.signInWithOtp({
-                                    email: email as string,
-                                    options: {
-                                        shouldCreateUser: true,
-                                        emailRedirectTo: 'https://localhost:3000/register',
-                                    },
+                                addMember.mutateAsync({
+                                    fullname,
+                                    email,
+                                    role,
+                                    contract,
+                                    position,
+                                    manager_id: session?.user?.id,
+                                    id: ""
                                 })
-                            }
-                            }
-                        >
-                            DUPA
+                            }}>
+                            ADD
                         </button>
                     </div>
                 </div>

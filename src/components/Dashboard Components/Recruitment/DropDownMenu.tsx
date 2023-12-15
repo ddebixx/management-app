@@ -7,7 +7,6 @@ import Swal from 'sweetalert2';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import { useMutation, useQueryClient } from 'react-query';
-import { EditCandidateModal } from './EditCandidateModal';
 
 export interface DropDownMenuProps {
     setCandidateId: (candidateId: any) => void;
@@ -87,7 +86,7 @@ export const DropDownMenu = ({ candidateId, setCandidateId }: DropDownMenuProps)
                         </DropdownMenu.Item>
                         <DropdownMenu.Item className="group text-base leading-none text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none">
                             <button onClick={() => deleteTask()}>
-                                Delete Candidate{' '}
+                                Delete Candidate{''}
                             </button>
                             <div className="ml-auto pl-[20px] text-mauve11 group-data-[highlighted]:text-white group-data-[disabled]:text-mauve8">
                                 <DeleteIcon />

@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar"
 import { AddCandidateModal } from "@/components/Dashboard Components/Recruitment/AddCandidateModal"
 import { CandidateCard } from "@/components/Dashboard Components/Recruitment/CandidateCard"
-import { EditCandidateModal } from "@/components/Dashboard Components/Recruitment/EditCandidateModal"
 import { Database } from "@/types/supabase"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
@@ -15,9 +14,9 @@ export default async function TasksPage () {
     return (
         <>
             <div>
-                <Navbar session={session} />
+                <Navbar />
                 <AddCandidateModal session={session} />
-                <CandidateCard session={session} />
+                <CandidateCard />
             </div>
         </>
     )

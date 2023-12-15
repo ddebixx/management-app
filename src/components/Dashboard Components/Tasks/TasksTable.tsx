@@ -28,7 +28,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
     const [globalFilter, setGlobalFilter] = useState("");
     const queryClient = useQueryClient();
     const { userRole } = useUserContext();
-    
+
     const useTasksQuery = ({ user, supabase, userRole }: any) => {
         return useQuery(['tasks', user?.id, userRole], async () => {
             const { data, error, status } = await supabase
@@ -41,6 +41,15 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
             }
 
             if (data) {
+
+                const currentDate = new Date();
+                data.forEach((task: any) => {
+                    const expiryDate = new Date(task.expiry_date);
+                    if (currentDate > expiryDate) {
+                        task.task_status = 'EXPIRED';
+                    }
+                })
+
                 setIsData(data);
                 queryClient.invalidateQueries(['tasks']);
             }

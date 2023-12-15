@@ -11,8 +11,6 @@ export const Navbar = () => {
     const supabase = createClientComponentClient<Database>();
     const { userRole } = useUserContext();
 
-    console.log(userRole)
-
     return (
         <>
             <div>

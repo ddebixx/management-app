@@ -54,15 +54,15 @@ export default function AssignTasksModal({ session }: { session: Session | null 
             taskDescription,
             taskStatus,
         }: {
-            managerName: string | null | undefined;
-            assignmentDate: string | null | undefined;
-            expiryDate: string | null | undefined;
-            workerName: string | null | undefined;
-            managerId: string | null | undefined;
-            workerId: string | null | undefined;
-            taskName: string | null | undefined;
-            taskDescription: string | null | undefined;
-            taskStatus: string | null | undefined;
+            managerName: string | null;
+            assignmentDate: string | null;
+            expiryDate: string | null;
+            workerName: string | null;
+            managerId: string | undefined;
+            workerId: string | null;
+            taskName: string | null;
+            taskDescription: string | null;
+            taskStatus: string | null;
         }) => {
             await supabase
                 .from('tasks')

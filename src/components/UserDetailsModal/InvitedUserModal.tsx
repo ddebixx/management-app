@@ -1,47 +1,20 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/supabase'
 import { useUserContext } from '@/actions/userContextProvider'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation } from 'react-query'
 
-export default function UserDetailsModal({ session }: { session: Session | null }) {
+export default function InvitedUserModal({ session }: { session: Session | null }) {
     const supabase = createClientComponentClient<Database>()
     const [fullname, setFullname] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
     const [role, setRole] = useState<string | null>(null)
-    const user = session?.user
+    const [password, setPassword] = useState<string | null>(null)
     const router = useRouter();
     const { userRole } = useUserContext();
-
-    const getProfile = useQuery(
-        ['profile', user?.id],
-        async () => {
-            const { data, error, status } = await supabase
-                .from('users')
-                .select(`full_name, email, role`)
-                .eq('id', user?.id as string)
-                .single();
-
-            if (error && status !== 406) {
-                throw error;
-            }
-
-            if (data) {
-                setFullname(data.full_name);
-                setEmail(data.email);
-                setRole(data.role);
-            }
-
-            return data;
-        },
-        {
-            enabled: !!user,
-        }
-    );
-
 
     const updateProfile = useMutation(
         async ({
@@ -72,7 +45,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
             },
         }
     );
-    
+
     return (
         <>
             {!userRole && (
@@ -92,6 +65,16 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                         />
                     </div>
                     <div>
+                        <input
+                            className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                            id="fullName"
+                            type="password"
+                            value={password || ''}
+                            placeholder='Full name'
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <div>
                         <label htmlFor="Founder">Founder</label>
                         <input type='checkbox' id="Founder" value="Founder" onChange={(e) => setRole(e.target.value)} />
                         <label htmlFor="ProjectManager">Project Manager</label>
@@ -102,8 +85,14 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                     <div>
                         <button
                             className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
-                            onClick={() => {
+                            onClick={async () => {
                                 updateProfile.mutateAsync({ fullname, email, role })
+
+                                const { data, error } = await supabase.auth.signUp({
+                                    email: email ?? '',
+                                    password: password ?? '',
+                                })
+
                                 router.push('/dashboard/schedule')
                             }
                             }

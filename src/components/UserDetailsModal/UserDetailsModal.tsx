@@ -12,36 +12,8 @@ export default function UserDetailsModal({ session }: { session: Session | null 
     const [fullname, setFullname] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
     const [role, setRole] = useState<string | null>(null)
-    const user = session?.user
     const router = useRouter();
     const { userRole } = useUserContext();
-
-    const getProfile = useQuery(
-        ['profile', user?.id],
-        async () => {
-            const { data, error, status } = await supabase
-                .from('users')
-                .select(`full_name, email, role`)
-                .eq('id', user?.id as string)
-                .single();
-
-            if (error && status !== 406) {
-                throw error;
-            }
-
-            if (data) {
-                setFullname(data.full_name);
-                setEmail(data.email);
-                setRole(data.role);
-            }
-
-            return data;
-        },
-        {
-            enabled: !!user,
-        }
-    );
-
 
     const updateProfile = useMutation(
         async ({
@@ -72,7 +44,39 @@ export default function UserDetailsModal({ session }: { session: Session | null 
             },
         }
     );
-    
+
+    const updateSubordinate = useMutation(
+        async ({
+            fullname,
+            email,
+            role,
+            id
+        }: {
+            fullname: string | null | undefined;
+            email: string | null | undefined;
+            role: string | null | undefined;
+            id: string | null | undefined;
+        }) => {
+            await supabase
+                .from('subordinates')
+                .update({
+                    email: email ?? '',
+                    full_name: fullname ?? '',
+                    role: role ?? '',
+                    id: session?.user?.id
+                })
+                .eq('email', email ?? '')
+        },
+        {
+            onSuccess: () => {
+                alert('Profile updated!')
+            },
+            onError: () => {
+                alert('Error updating the data!')
+            },
+        }
+    );
+
     return (
         <>
             {!userRole && (
@@ -104,6 +108,8 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                             className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
                             onClick={() => {
                                 updateProfile.mutateAsync({ fullname, email, role })
+                                updateSubordinate.mutateAsync({ fullname, email, role, id: session?.user?.id })
+
                                 router.push('/dashboard/schedule')
                             }
                             }

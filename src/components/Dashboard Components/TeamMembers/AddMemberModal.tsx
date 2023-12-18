@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
 import { useMutation, useQueryClient } from 'react-query'
+import { supabaseAdmin } from '@/lib/admin'
 
 export const AddMemberModal = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>()
@@ -47,8 +48,8 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
         },
         {
             onSuccess: () => {
-                queryClient.invalidateQueries(['subordinates', session?.user?.id])
                 alert('Profile updated!')
+                queryClient.invalidateQueries(['subordinates', session?.user?.id])
             },
             onError: () => {
                 alert('Error updating the data!')
@@ -119,6 +120,7 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
                                     manager_id: session?.user?.id,
                                     id: ""
                                 })
+                                await supabaseAdmin.auth.admin.inviteUserByEmail(email ?? '')
                             }}>
                             ADD
                         </button>

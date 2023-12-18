@@ -34,7 +34,7 @@ export const AuthModal = () => {
             description="Login to your account"
             isOpen={isOpen}
             onChange={onChange}>
-             <Auth
+            <Auth
                 theme="dark"
                 magicLink
                 providers={['google']}
@@ -49,7 +49,8 @@ export const AuthModal = () => {
                             }
                         }
                     }
-                }} />
+                }}
+            />
         </Modal>
     )
 }

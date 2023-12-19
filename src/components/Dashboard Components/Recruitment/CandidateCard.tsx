@@ -7,8 +7,15 @@ import { useQuery, useQueryClient } from 'react-query'
 import { DropDownMenu } from './DropDownMenu'
 import { EditCandidateModal } from './EditCandidateModal'
 import { supabaseAdmin } from '@/lib/admin'
+import dynamic from 'next/dynamic'
+import { useSearchParams } from 'next/navigation'
 
 type Candidates = Database["public"]["Tables"]["recruitment"]["Row"]
+
+const Pagination = dynamic(() => import("../Pagination"), {
+    loading: () => <p>...</p>,
+});
+
 
 export const CandidateCard = () => {
     const supabase = createClientComponentClient<Database>()
@@ -16,17 +23,24 @@ export const CandidateCard = () => {
     const [candidateId, setCandidateId] = useState<any | null>(null);
     const queryClient = useQueryClient();
     const [pdfUrls, setPdfUrls] = useState<{ [id: string]: string }>({});
+    const searchParams = useSearchParams();
+    const membersPerPage = 10;
+    const page = Number(searchParams.get('page') ?? 1);
+    const pathName = '/dashboard/recruitment';
+    const [pageCount, setPageCount] = useState(0);
 
     const handleCandidateSelect = (candidateId: number) => {
         setCandidateId(candidateId);
     };
 
     const { data: candidateData, isLoading, isError } = useQuery(
-        ['recruitment'],
+        ['recruitment', page],
         async () => {
-            const { data, error, status } = await supabase
+            const { data, error, status, count } = await supabase
                 .from("recruitment")
-                .select("*")
+                .select("*", { count: 'exact' })
+                .eq("manager_id", (await supabase.auth.getUser()).data.user?.id as string)
+                .range((page - 1) * membersPerPage, page * membersPerPage - 1);
 
             if (error && status !== 406) {
                 throw error;
@@ -34,10 +48,13 @@ export const CandidateCard = () => {
 
             if (data) {
                 setIsData(data);
+                setPageCount(Math.ceil(count as number / membersPerPage));
                 queryClient.invalidateQueries(['recruitment']);
             }
         },
     );
+
+    console.log(page);
 
     useEffect(() => {
         isData.forEach((candidate) => {
@@ -59,14 +76,14 @@ export const CandidateCard = () => {
         <>
             <div className='flex items-start gap-4'>
                 {isData.map((candidate) => (
-                    <div>
+                    <div key={candidate.id}>
                         <div onClick={() => handleCandidateSelect(candidate.id)}>
                             <DropDownMenu candidateId={candidateId}
                                 setCandidateId={setCandidateId}
                             />
                         </div>
 
-                        <div key={candidate.id}>
+                        <div>
                             <p>{candidate.full_name}</p>
                             <p>{candidate.email}</p>
                             <p>{candidate.position}</p>
@@ -81,6 +98,7 @@ export const CandidateCard = () => {
                 ))}
             </div>
 
+            {pageCount > 0 && <Pagination page={page} pageCount={pageCount} pathname={pathName} />}
 
             {candidateId && (
                 <EditCandidateModal candidateId={candidateId} />

@@ -173,6 +173,7 @@ export interface Database {
           file_path: string | null
           full_name: string | null
           id: number
+          manager_id: string | null
           position: string | null
           status: string
         }
@@ -182,6 +183,7 @@ export interface Database {
           file_path?: string | null
           full_name?: string | null
           id?: number
+          manager_id?: string | null
           position?: string | null
           status: string
         }
@@ -191,17 +193,26 @@ export interface Database {
           file_path?: string | null
           full_name?: string | null
           id?: number
+          manager_id?: string | null
           position?: string | null
           status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "recruitment_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       subordinates: {
         Row: {
           contract: string | null
           email: string | null
           full_name: string | null
-          id: string | null
+          id: string
           manager_id: string | null
           position: string | null
           role: string | null
@@ -210,7 +221,7 @@ export interface Database {
           contract?: string | null
           email?: string | null
           full_name?: string | null
-          id?: string | null
+          id: string
           manager_id?: string | null
           position?: string | null
           role?: string | null
@@ -219,7 +230,7 @@ export interface Database {
           contract?: string | null
           email?: string | null
           full_name?: string | null
-          id?: string | null
+          id?: string
           manager_id?: string | null
           position?: string | null
           role?: string | null

@@ -136,6 +136,7 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
                                                 email: email ?? '',
                                                 full_name: fullname ?? '',
                                                 position: position ?? '',
+                                                manager_id: session?.user.id ?? '',
                                             },
                                         ]).then(insertResponse => {
                                             if (insertResponse.error) {

@@ -34,9 +34,9 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
         }) => {
             await supabase
                 .from('subordinates')
-                .upsert([
+                .insert([
                     {
-                        id: "",
+                        id: "1",
                         email: email ?? '',
                         full_name: fullname ?? '',
                         role: role ?? '',
@@ -60,7 +60,7 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
     return (
         <>
             {session?.user &&
-                <div className="h-screen">
+                <div>
                     <div>
                         <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
                             id="email"

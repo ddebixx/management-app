@@ -15,7 +15,7 @@ export default async function TeamMembersPage() {
         <>
             {session?.user &&
                 <div>
-                    <Navbar session={session} />
+                    <Navbar />
                     <AddMemberModal session={session} />
                     <TeamMemberCard session={session} />
                 </div>

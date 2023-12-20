@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery } from 'react-query'
 import { DropDownMenu } from './DropDownMenu'
 import { EditCandidateModal } from './EditCandidateModal'
-import { supabaseAdmin } from '@/lib/admin'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
+import { supabaseAdmin } from '@/libs/admin'
 
 type Candidates = Database["public"]["Tables"]["recruitment"]["Row"]
 
@@ -21,7 +21,6 @@ export const CandidateCard = () => {
     const supabase = createClientComponentClient<Database>()
     const [isData, setIsData] = useState<Candidates[]>([])
     const [candidateId, setCandidateId] = useState<any | null>(null);
-    const queryClient = useQueryClient();
     const [pdfUrls, setPdfUrls] = useState<{ [id: string]: string }>({});
     const searchParams = useSearchParams();
     const membersPerPage = 10;
@@ -34,7 +33,7 @@ export const CandidateCard = () => {
     };
 
     const { data: candidateData, isLoading, isError } = useQuery(
-        ['recruitment', page],
+        ['recruitment', isData, page],
         async () => {
             const { data, error, status, count } = await supabase
                 .from("recruitment")
@@ -49,12 +48,9 @@ export const CandidateCard = () => {
             if (data) {
                 setIsData(data);
                 setPageCount(Math.ceil(count as number / membersPerPage));
-                queryClient.invalidateQueries(['recruitment']);
             }
         },
     );
-
-    console.log(page);
 
     useEffect(() => {
         isData.forEach((candidate) => {
@@ -78,8 +74,8 @@ export const CandidateCard = () => {
                 {isData.map((candidate) => (
                     <div key={candidate.id}>
                         <div onClick={() => handleCandidateSelect(candidate.id)}>
-                            <DropDownMenu candidateId={candidateId}
-                                setCandidateId={setCandidateId}
+                            <DropDownMenu candidateId={candidate.id}
+                                // setCandidateId={setCandidateId}
                             />
                         </div>
 
@@ -100,9 +96,7 @@ export const CandidateCard = () => {
 
             {pageCount > 0 && <Pagination page={page} pageCount={pageCount} pathname={pathName} />}
 
-            {candidateId && (
-                <EditCandidateModal candidateId={candidateId} />
-            )}
+            <EditCandidateModal candidateId={candidateId} />
         </>
     )
 }

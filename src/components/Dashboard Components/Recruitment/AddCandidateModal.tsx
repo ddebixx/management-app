@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useMutation, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Modal } from '@/components/Modal'
 import { useModal } from '@/hooks/useModal'
 import { Database } from '@/types/supabase'
-import { supabaseAdmin } from '@/lib/admin'
+import { supabaseAdmin } from '@/libs/admin'
+import toast from 'react-hot-toast'
 
 
 export const AddCandidateModal = ({ session }: { session: Session | null }) => {
@@ -14,21 +15,26 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
     const [fullname, setFullname] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
     const [position, setPosition] = useState<string | null>(null)
-    const { isOpen, onOpen, onClose } = useModal();
     const [file, setFile] = useState<File | null>(null);
     const queryClient = useQueryClient();
+    const { refetch } = useQuery(['recruitment', session?.user.id])
+    const { isOpen, onOpen, onClose } = useModal();
 
-    const addCandidate = useMutation(
+    const { mutateAsync: addCandidate } = useMutation(
         async ({
             fullname,
             email,
             position,
-            status
+            status,
+            file_path,
+            manager_id,
         }: {
             fullname: string | null;
             email: string | null;
             position: string | null;
             status: string | null;
+            file_path: string | null;
+            manager_id: string | null;
         }) => {
             await supabase
                 .from('recruitment')
@@ -38,16 +44,21 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
                         full_name: fullname ?? '',
                         position: position ?? '',
                         status: status ?? '',
+                        file_path: file_path ?? '',
+                        manager_id: manager_id ?? '',
                     },
                 ])
         },
         {
             onSuccess: () => {
-                queryClient.invalidateQueries(['recruitment'])
+                toast.success('Candidate added successfully!');
+                queryClient.invalidateQueries()
+                refetch()
+
                 onClose();
             },
             onError: () => {
-                alert('Error updating the data!')
+                toast.error('Error updating the data!')
             },
         }
     );
@@ -68,7 +79,7 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
         {
             onSuccess: () => {
                 queryClient.invalidateQueries(['recruitment'])
-                onClose();
+
             },
             onError: () => {
                 alert('Error updating the data!')
@@ -128,26 +139,19 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
                                         console.error('Error uploading file:', response.error.message);
                                     } else {
                                         console.log('File uploaded successfully');
-
-                                        supabase.from('recruitment').insert([
-                                            {
-                                                file_path: path ?? '',
-                                                status: 'Received',
-                                                email: email ?? '',
-                                                full_name: fullname ?? '',
-                                                position: position ?? '',
-                                                manager_id: session?.user.id ?? '',
-                                            },
-                                        ]).then(insertResponse => {
-                                            if (insertResponse.error) {
-                                                console.error('Error inserting file path:', insertResponse.error.message);
-                                            } else {
-                                                console.log('File path inserted successfully');
-                                                onClose();
-                                            }
-                                        });
                                     }
                                 });
+
+                            addCandidate({
+                                fullname,
+                                email,
+                                position,
+                                status: 'Received',
+                                file_path: path,
+                                manager_id: session?.user.id as string,
+                            });
+                        } else {
+                            toast.error('Please upload a file')
                         }
                     }}>
                     DUPA
@@ -158,14 +162,12 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
 
     return (
         <>
-            {session?.user &&
-                <Modal
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    title="Add candidate"
-                    body={bodyContent}
-                />
-            }
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                title="Add candidate"
+                body={bodyContent}
+            />
             <button onClick={onOpen}
                 className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4">
                 Add candidate

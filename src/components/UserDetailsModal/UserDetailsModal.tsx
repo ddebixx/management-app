@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Database } from '@/types/supabase'
 import { useUserContext } from '@/actions/userContextProvider'
 import { useMutation, useQuery } from 'react-query'
+import toast from 'react-hot-toast'
 
 export default function UserDetailsModal({ session }: { session: Session | null }) {
     const supabase = createClientComponentClient<Database>()
@@ -69,10 +70,10 @@ export default function UserDetailsModal({ session }: { session: Session | null 
         },
         {
             onSuccess: () => {
-                alert('Profile updated!')
+                toast.success('Profile updated!')
             },
             onError: () => {
-                alert('Error updating the data!')
+                toast.error('Error updating the data!')
             },
         }
     );

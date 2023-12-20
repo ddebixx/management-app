@@ -36,6 +36,29 @@ export interface Database {
         }
         Relationships: []
       }
+      customers: {
+        Row: {
+          id: string
+          stripe_customer_id: string
+        }
+        Insert: {
+          id: string
+          stripe_customer_id: string
+        }
+        Update: {
+          id?: string
+          stripe_customer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       hours: {
         Row: {
           endTime: string | null

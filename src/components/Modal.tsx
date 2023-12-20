@@ -9,6 +9,7 @@ interface ModalProps {
     title?: string;
     body?: React.ReactElement;
     disabled?: boolean;
+    isEditing?: boolean;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -16,7 +17,7 @@ export const Modal: React.FC<ModalProps> = ({
     onClose,
     title,
     body,
-    disabled,
+    disabled
 }) => {
 
     const [showModal, setShowModal] = useState(isOpen);

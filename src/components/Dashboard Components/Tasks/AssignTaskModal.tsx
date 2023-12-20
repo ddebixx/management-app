@@ -7,6 +7,7 @@ import { Database } from '@/types/supabase'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useSecondModal } from '@/hooks/useSecondModal'
 import { Modal } from '@/components/Modal'
+import toast from 'react-hot-toast'
 
 type Members = Database["public"]["Tables"]["subordinates"]["Row"]
 
@@ -83,6 +84,7 @@ export default function AssignTasksModal({ session }: { session: Session | null 
         },
         {
             onSuccess: () => {
+                toast.success('Task assigned successfully!');
                 queryClient.invalidateQueries(['tasks', user?.id]);
             },
             onError: (error) => {

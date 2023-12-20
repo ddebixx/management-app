@@ -6,6 +6,7 @@ import { Modal } from '@/components/Modal'
 import { Database } from '@/types/supabase'
 import { useModal } from '@/hooks/useModal'
 import { useMutation, useQueryClient } from 'react-query'
+import toast from 'react-hot-toast'
 
 
 export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
@@ -50,6 +51,7 @@ export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
         },
         {
             onSuccess: () => {
+                toast.success("Task updated successfully!");
                 queryClient.invalidateQueries(["tasks"]);
                 onClose();
             },

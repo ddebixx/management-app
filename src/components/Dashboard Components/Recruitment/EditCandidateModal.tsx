@@ -1,11 +1,12 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
-import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useMutation, useQueryClient } from 'react-query'
+import { useEffect, useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Database } from '@/types/supabase'
 import { Modal } from '@/components/Modal'
 import { useSecondModal } from '@/hooks/useSecondModal'
+import toast from 'react-hot-toast'
 
 
 export const EditCandidateModal = ({ candidateId }: { candidateId: number }) => {
@@ -15,6 +16,7 @@ export const EditCandidateModal = ({ candidateId }: { candidateId: number }) => 
     const [position, setPosition] = useState<string | null>(null)
     const queryClient = useQueryClient();
     const { isOpen, onOpen, onClose } = useSecondModal();
+    const { refetch } = useQuery(['recruitment', candidateId])
 
     useEffect(() => {
         if (candidateId) {
@@ -23,7 +25,6 @@ export const EditCandidateModal = ({ candidateId }: { candidateId: number }) => 
     }, [candidateId, onOpen]);
 
     const updateCandidateMutation = useMutation(
-        ["recruitment", candidateId],
         async ({
             fullname,
             email,
@@ -44,7 +45,10 @@ export const EditCandidateModal = ({ candidateId }: { candidateId: number }) => 
         },
         {
             onSuccess: () => {
-                queryClient.invalidateQueries(["recruitment", candidateId]);
+                queryClient.invalidateQueries(["recruitment"]);
+                toast.success("Candidate updated successfully!");
+                
+                refetch()
                 onClose();
             },
         }

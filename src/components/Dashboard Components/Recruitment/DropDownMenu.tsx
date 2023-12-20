@@ -9,11 +9,11 @@ import { Database } from '@/types/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 
 export interface DropDownMenuProps {
-    setCandidateId: (candidateId: any) => void;
+    // setCandidateId: (candidateId: any) => void;
     candidateId: number | null;
 }
 
-export const DropDownMenu = ({ candidateId, setCandidateId }: DropDownMenuProps) => {
+export const DropDownMenu = ({ candidateId }: DropDownMenuProps) => {
     const supabase = createClientComponentClient<Database>();
     const queryClient = useQueryClient();
 
@@ -27,12 +27,12 @@ export const DropDownMenu = ({ candidateId, setCandidateId }: DropDownMenuProps)
             onSuccess: () => {
                 Swal.fire({
                     title: 'Deleted!',
-                    text: 'Your task has been deleted.',
+                    text: 'User has been deleted.',
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 1000
                 })
-                queryClient.invalidateQueries(['tasks']);
+                queryClient.invalidateQueries(['recruitment']);
             },
             onError: () => {
                 Swal.fire({
@@ -76,7 +76,7 @@ export const DropDownMenu = ({ candidateId, setCandidateId }: DropDownMenuProps)
                         sideOffset={5}>
                         <DropdownMenu.Item className="group text-base text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none data-[disabled]:pointer-events-none">
                             <button onClick={() => {
-                                setCandidateId(candidateId);
+                                // setCandidateId(candidateId);
                             }}>
                                 Edit Candidate
                             </button>
@@ -85,7 +85,12 @@ export const DropDownMenu = ({ candidateId, setCandidateId }: DropDownMenuProps)
                             </div>
                         </DropdownMenu.Item>
                         <DropdownMenu.Item className="group text-base leading-none text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none">
-                            <button onClick={() => deleteTask()}>
+                            <button onClick={() => {
+                                // setCandidateId(candidateId)
+
+                                deleteTask()
+                            }
+                            }>
                                 Delete Candidate{''}
                             </button>
                             <div className="ml-auto pl-[20px] text-mauve11 group-data-[highlighted]:text-white group-data-[disabled]:text-mauve8">

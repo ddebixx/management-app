@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
 import { useMutation, useQueryClient } from 'react-query'
-import { supabaseAdmin } from '@/lib/admin'
+import { supabaseAdmin } from '@/libs/admin'
+import toast from 'react-hot-toast'
 
 export const AddMemberModal = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>()
@@ -36,7 +37,7 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
                 .from('subordinates')
                 .insert([
                     {
-                        id: "1",
+                        id: Math.random().toString(),
                         email: email ?? '',
                         full_name: fullname ?? '',
                         role: role ?? '',
@@ -48,11 +49,11 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
         },
         {
             onSuccess: () => {
-                alert('Profile updated!')
+                toast.success('Profile updated!')
                 queryClient.invalidateQueries(['subordinates', session?.user?.id])
             },
             onError: () => {
-                alert('Error updating the data!')
+                toast.error('Error updating the data!')
             },
         }
     );

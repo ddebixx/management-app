@@ -10,6 +10,7 @@ import { Leaf } from './Leaf'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
 import { useMutation, useQueryClient } from 'react-query'
+import toast from 'react-hot-toast'
 
 const HOTKEYS = {
     'cmd+b': 'bold',
@@ -117,9 +118,11 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
         },
         {
             onSuccess: () => {
+                toast.success('Note added successfully!');
                 queryClient.invalidateQueries(['notes', user?.id]);
             },
             onError: (error) => {
+                toast.error('Something went wrong!')
                 throw error;
             },
         }

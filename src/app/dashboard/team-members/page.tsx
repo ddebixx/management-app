@@ -13,13 +13,13 @@ export default async function TeamMembersPage() {
 
     return (
         <>
-            {session?.user &&
-                <div>
-                    <Navbar />
-                    <AddMemberModal session={session} />
+            <div className="flex gap-16 items-center">
+                <Navbar />
+                <div className="p-8 w-full">
+                    {/* <AddMemberModal session={session} /> */}
                     <TeamMemberCard session={session} />
                 </div>
-            }
+            </div>
         </>
     )
 }

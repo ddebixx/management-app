@@ -8,6 +8,7 @@ import { useModal } from '@/hooks/useModal'
 import { Database } from '@/types/supabase'
 import { supabaseAdmin } from '@/libs/admin'
 import toast from 'react-hot-toast'
+import { UserAdd } from 'iconsax-react'
 
 
 export const AddCandidateModal = ({ session }: { session: Session | null }) => {
@@ -168,9 +169,10 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
                 title="Add candidate"
                 body={bodyContent}
             />
-            <button onClick={onOpen}
-                className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4">
-                Add candidate
+            <button className='fixed bottom-24 right-4 bg-gradient-to-b from-violet-600 to-violet-500 p-2 rounded-full min-[1024px]:w-fit min-[1024px]:flex min-[1024px]:gap-2 min-[1024px]:relative min-[1024px]:top-0 min-[1024px]:right-0 hover:opacity-90 transition'
+                onClick={onOpen}>
+                <p className='max-[1024px]:hidden text-white'>Add candidate</p>
+                <UserAdd size="24" color="#fff" />
             </button>
         </>
     )

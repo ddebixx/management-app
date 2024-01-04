@@ -1,6 +1,6 @@
 "use client"
 
-import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
 import { Text } from 'slate'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -14,7 +14,7 @@ const serialize = (node) => {
         }
         if (node['heading-one']) {
             return (
-                <h1 className="text-3xl font-cal md:text-6xl mb-10 text-gray-800">
+                <h1 className="text-3xl mb-10 text-gray-800 max-[768px]:text-2xl">
                     {node.text}
                 </h1>
             )
@@ -65,7 +65,7 @@ const serialize = (node) => {
     }
 }
 
-export const NoteEditor = ({ session }: { session: Session | null }) => {
+export const NoteEditor = () => {
     const supabase = createClientComponentClient<Database>();
     const id = window.location.pathname.split("/")[3];
     const queryClient = useQueryClient();
@@ -129,15 +129,16 @@ export const NoteEditor = ({ session }: { session: Session | null }) => {
     }
 
     return (
-        <div>
+        <div className="p-4 border-[1px] rounded-lg bg-white w-full h-[80vh] flex flex-col gap-4">
             {isLoading ? (
                 <p>Loading...</p>
             ) : isError ? (
                 <p>Error loading data.</p>
             ) : notesData && notesData.length > 0 ? (
-                <div>
+                <>
                     {notesData.map((note) => (
-                        <div key={note.id}>
+                        <div className="w-full border-[1px] h-full rounded-lg p-4 overflow-y-auto"
+                            key={note.id}>
                             {Array.isArray(note.content) ? (
                                 note.content.map((node, index) => (
                                     <div key={index}>{serialize(node)}</div>
@@ -147,12 +148,12 @@ export const NoteEditor = ({ session }: { session: Session | null }) => {
                             )}
                         </div>
                     ))}
-                </div>
+                </>
             ) : (
                 <p>No data available.</p>
             )}
-            {/* <AddNoteModal session={session} /> */}
             <button
+                className='bg-gradient-to-b from-red-600 to-red-500 hover:opacity-90 transition text-white font-bold py-2 px-6 rounded-full self-start'
                 onClick={() => handleNoteDelete(id)}>
                 DELETE
             </button>

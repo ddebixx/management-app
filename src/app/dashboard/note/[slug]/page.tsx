@@ -12,8 +12,12 @@ export default async function NotePage() {
 
     return (
         <>
-            <Navbar session={session} />
-            <NoteEditor session={session} />
+            <div className="flex gap-16 items-center">
+                <Navbar />
+                <div className="p-8 w-full">
+                    <NoteEditor />
+                </div>
+            </div>
         </>
     )
 }

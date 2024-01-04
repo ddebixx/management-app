@@ -50,7 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
                         <div className="translate h-full lg:h-auto md:h-auto border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                             {/* Header */}
                             <div className="flex items-center p-6 rounded-t justify-center relative">
-                                <button className="p-1 border-0 hover:opacity-70 transition absolute right-5"
+                                <button className="p-1 border-0 hover:opacity-70 text-lg transition absolute right-5"
                                     onClick={handleClose}>
                                     <IoMdClose />
                                 </button>

@@ -1,22 +1,22 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar"
-import { AddCandidateModal } from "@/components/Dashboard Components/Recruitment/AddCandidateModal"
 import { CandidateCard } from "@/components/Dashboard Components/Recruitment/CandidateCard"
 import { Database } from "@/types/supabase"
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
+import { cookies } from "next/headers";
 
-export default async function TasksPage () {
+export default async function TasksPage() {
     const supabase = createServerComponentClient<Database>({ cookies })
     const {
         data: { session },
     } = await supabase.auth.getSession()
-    
+
     return (
         <>
-            <div>
+            <div className="flex gap-16 items-center">
                 <Navbar />
-                <AddCandidateModal session={session} />
-                <CandidateCard />
+                <div className="p-8 w-full">
+                    <CandidateCard session={session} />
+                </div>
             </div>
         </>
     )

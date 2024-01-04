@@ -7,12 +7,15 @@ import React, { createContext, useEffect } from "react";
 type UserContextType = {
     userRole: string;
     setUserRole: (userRole: string) => void;
+    userName: string;
+    setUserName: (userName: string) => void;
 };
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export default function UserContextProvider({ children }: { children: React.ReactNode }) {
     const [userRole, setUserRole] = React.useState<string>("");
+    const [userName, setUserName] = React.useState<string>("");
     const {
         supabaseClient: supabase
     } = useSessionContext();
@@ -21,17 +24,18 @@ export default function UserContextProvider({ children }: { children: React.Reac
     useEffect(() => {
         if (user) {
             const getUserRole = async () => {
-                const { data: userRole, error } = await supabase
+                const { data: userData, error } = await supabase
                     .from("users")
-                    .select("role")
+                    .select("role, full_name")
                     .eq("id", user.id)
                     .single();
                 if (error) {
                     console.log(error);
                 }
 
-                if (userRole) {
-                    setUserRole(userRole.role);
+                if (userData) {
+                    setUserRole(userData.role);
+                    setUserName(userData.full_name);
                 }
             };
             getUserRole();
@@ -39,7 +43,7 @@ export default function UserContextProvider({ children }: { children: React.Reac
     }, [user, supabase]);
 
     return (
-        <UserContext.Provider value={{ userRole, setUserRole }}>
+        <UserContext.Provider value={{ userRole, setUserRole, userName, setUserName }}>
             {children}
         </UserContext.Provider>
     );

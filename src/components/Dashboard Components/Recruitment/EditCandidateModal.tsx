@@ -94,7 +94,7 @@ export const EditCandidateModal = ({ candidateId }: { candidateId: number }) => 
                             position,
                         }
                     )}>
-                    DUPA
+                    Edit
                 </button>
             </div>
         </div>

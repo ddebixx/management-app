@@ -10,16 +10,16 @@ export default async function SchedulePage() {
         data: { session },
     } = await supabase.auth.getSession()
 
-    
+
 
     return (
         <>
-            {session?.user &&
-                <div>
+            <div className="flex gap-16 items-center">
+                <Navbar />
+                <div className="p-8 w-full">
                     <Schedule session={session} />
-                    <Navbar session={session} />
                 </div>
-            }
+            </div>
         </>
     )
 }

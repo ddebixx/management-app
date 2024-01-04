@@ -16,10 +16,9 @@ const Pagination = ({ page, pageCount, pathname }: PaginationProps) => {
 
     return (
         <>
-            <div className="w-36 bg-violet-300 text-lg text-black">
+            <div className="bg-gradient-to-b from-violet-600 to-violet-500 text-white px-8 py-2 rounded-full font-medium hover:scale-95 hover:opacity-80 duration-300 w-fit">
                 {page !== 1 && (
-                    <Link
-                        href={{
+                    <Link href={{
                             pathname,
                             query: {
                                 ...parsedParams,
@@ -30,8 +29,7 @@ const Pagination = ({ page, pageCount, pathname }: PaginationProps) => {
                     </Link>
                 )}
                 {pageCount > page && (
-                    <Link
-                        href={{
+                    <Link href={{
                             pathname,
                             query: {
                                 ...parsedParams,
@@ -40,6 +38,7 @@ const Pagination = ({ page, pageCount, pathname }: PaginationProps) => {
                         }}>
                         Next
                     </Link>
+
                 )}
             </div>
         </>

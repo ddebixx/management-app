@@ -18,13 +18,13 @@ export const Element = ({ attributes, children, element }: any) => {
             );
         case 'heading-one':
             return (
-                <h1 className="text-4xl" {...attributes}>
+                <h1 className="text-lg" {...attributes}>
                     {children}
                 </h1>
             );
         case 'heading-two':
             return (
-                <h2 className="text-2xl" {...attributes}>
+                <h2 className="text-base" {...attributes}>
                     {children}
                 </h2>
             );

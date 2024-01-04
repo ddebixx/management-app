@@ -11,6 +11,9 @@ import { Session, createClientComponentClient } from '@supabase/auth-helpers-nex
 import { Database } from '@/types/supabase'
 import { useMutation, useQueryClient } from 'react-query'
 import toast from 'react-hot-toast'
+import { useModal } from '@/hooks/useModal'
+import { Modal } from '@/components/Modal'
+import { NoteAdd } from 'iconsax-react'
 
 const HOTKEYS = {
     'cmd+b': 'bold',
@@ -19,23 +22,12 @@ const HOTKEYS = {
     'cmd+c': 'code',
 }
 
-interface ButtonProps {
-    active: string;
-}
-
 type HotkeyFormat = typeof HOTKEYS[keyof typeof HOTKEYS];
 
 const isMarkActive = (editor: BaseEditor, format: HotkeyFormat) => {
     const marks = Editor.marks(editor) as Record<string, boolean> | null;
     return marks ? marks[format] === true : false;
 };
-
-const Button = React.forwardRef(({ active, ...children }: ButtonProps) => (
-    <span
-        {...children}
-        className={`${active && 'font-bold'} cursor-pointer mr-3 p-1`}
-    />
-))
 
 const initialValue = [
     {
@@ -56,6 +48,7 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
     const editor = useMemo(() => withHistory(withReact(createEditor())), [])
     const [currentMark, setCurrentMark] = useState(null)
     const queryClient = useQueryClient();
+    const { isOpen, onOpen, onClose } = useModal()
 
     const toggleMark = (editor: BaseEditor, format: string) => {
         const isActive = isMarkActive(editor, format)
@@ -129,19 +122,19 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
     );
 
 
-    return (
-        <>
+    const bodyContent = (
+        <div className='flex flex-col gap-4'>
             <input type="text"
-                placeholder=""
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Note title..."
+                className="px-4 py-2 outline-none border border-gray-300 rounded-lg w-full mb-4"
                 value={title || ''}
                 onChange={(e) => setTitle(e.target.value)}
             />
             <Slate editor={editor}
                 initialValue={value}
                 onChange={(value) => setValue(value as any)}>
-                <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg p-2 bg-gray-50 flex items-center justify-between">
-                    <div className="">
+                <div className="px-4 py-2 outline-none border border-gray-300 rounded-lg w-full mb-4">
+                    <div>
                         <ToolbarButton format="bold" icon="B" />
                         <ToolbarButton
                             format="italic"
@@ -157,10 +150,9 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
                     </div>
                 </div>
                 <Editable
-                    className="mt-4"
+                    className="px-4 py-2 outline-none border border-gray-300 rounded-lg min-h-48 h-full resize-none max-h-96 overflow-y-scroll"
                     renderElement={renderElement}
                     renderLeaf={renderLeaf}
-                    placeholder="Enter some rich text…"
                     spellCheck
                     autoFocus
                     onKeyDown={(event) => {
@@ -181,15 +173,38 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
             </Slate>
             <button
                 onClick={
-                    () => addNote({
-                        title,
-                        content: value as any,
-                        user_id: user?.id
-                    })
+                    () => {
+                        addNote({
+                            title,
+                            content: value as any,
+                            user_id: user?.id
+                        })
+
+                        onClose()
+                    }
                 }
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                className="bg-gradient-to-b from-violet-600 to-violet-500 text-white font-bold py-2 px-4 rounded-full hover:opacity-90 transition">
                 Add Note
             </button>
+        </div>
+    )
+
+    return (
+        <>
+            <div className='relative'>
+                <button className='fixed bottom-24 right-4 bg-gradient-to-b from-violet-600 to-violet-500 p-2 rounded-full min-[1024px]:w-fit min-[1024px]:flex min-[1024px]:gap-2 min-[1024px]:relative min-[1024px]:top-0 min-[1024px]:right-0 hover:opacity-90 transition'
+                    onClick={onOpen}>
+                    <p className='max-[1024px]:hidden text-white font-medium'>Add note</p>
+                    <NoteAdd size="24" color="#fff" />
+                </button>
+                <div className='relative'>
+                    <Modal isOpen={isOpen}
+                        onClose={onClose}
+                        title="Add note"
+                        body={bodyContent}
+                    />
+                </div>
+            </div>
         </>
     )
 }

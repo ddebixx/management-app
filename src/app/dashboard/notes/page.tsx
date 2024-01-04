@@ -1,5 +1,4 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar";
-import { AddNoteModal } from "@/components/Dashboard Components/Notes/AddNoteModal";
 import { Notes } from "@/components/Dashboard Components/Notes/Notes";
 import { Database } from "@/types/supabase";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -13,9 +12,12 @@ export default async function NotesPage() {
 
     return (
         <>
-            <Navbar session={session} />
-            <AddNoteModal session={session} />
-            <Notes session={session} />
+            <div className="flex gap-16 items-center">
+                <Navbar />
+                <div className="p-8 w-full">
+                    <Notes session={session} />
+                </div>
+            </div>
         </>
     )
 }

@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Modal } from '@/components/Modal'
 import { Database } from '@/types/supabase'
-import { useModal } from '@/hooks/useModal'
 import { useMutation, useQueryClient } from 'react-query'
 import toast from 'react-hot-toast'
+import { useSecondModal } from '@/hooks/useSecondModal'
 
 
 export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
@@ -15,7 +15,7 @@ export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
     const [expiryDate, setExpiryDate] = useState<string | null>(null)
     const [taskName, setTaskName] = useState<string | null>(null)
     const [taskDescription, setTaskDescription] = useState<string | null>(null)
-    const { isOpen, onOpen, onClose } = useModal();
+    const { isOpen, onOpen, onClose } = useSecondModal();
     const queryClient = useQueryClient();
 
     useEffect(() => {

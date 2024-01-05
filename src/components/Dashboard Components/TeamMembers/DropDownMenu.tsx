@@ -79,7 +79,7 @@ export const DropDownMenu = ({ memberId }: DropDownMenuProps) => {
                             }}>
                                 Delete Member{''}
                             </button>
-                            <div className="ml-auto pl-[20px] text-mauve11 group-data-[highlighted]:text-white group-data-[disabled]:text-mauve8">
+                            <div className="ml-auto pl-[20px] text-red-500">
                                 <DeleteIcon />
                             </div>
                         </DropdownMenu.Item>

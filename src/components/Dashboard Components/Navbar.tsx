@@ -5,7 +5,8 @@ import { Database } from "@/types/supabase";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"
-import { Calendar, LogoutCurve, Note, People, Setting2, Task, UserAdd } from 'iconsax-react';
+import { Calendar, LogoutCurve, Note, People, Task, UserAdd } from 'iconsax-react';
+import { Settings } from "./Settings/Settings";
 
 export const Navbar = () => {
     const router = useRouter();
@@ -59,7 +60,7 @@ export const Navbar = () => {
                                 </p>
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold uppercase text-violet-600">{userName}</h1>
+                                <h1 className="text-xl font-bold text-violet-600 truncate w-32">{userName}</h1>
                                 <p className="text-base font-semibold text-black/70">{userRole}</p>
                             </div>
                         </div>
@@ -97,10 +98,7 @@ export const Navbar = () => {
                     </div>
 
                     <div className="flex flex-col gap-4 self-start">
-                        <button className="max-[1024px]:hidden p-2 transition rounded-full hover:text-white hover:bg-gradient-to-b hover:from-violet-600 hover:to-violet-500 text-[#404040] flex self-end gap-4">
-                            <Setting2 size="24" />
-                            <p className="max-[1024px]:hidden">Settings</p>
-                        </button>
+                        <Settings />
                         <button className="max-[1024px]:hidden p-2 transition rounded-full hover:text-white hover:bg-gradient-to-b hover:from-violet-600 hover:to-violet-500 text-[#404040] flex self-end gap-4"
                             onClick={async () => {
                                 await supabase.auth.signOut();

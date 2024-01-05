@@ -185,7 +185,7 @@ export default function AssignTasksModal({ session }: { session: Session | null 
             />
             <button className='fixed bottom-24 right-4 bg-gradient-to-b from-violet-600 to-violet-500 p-2 rounded-full min-[1024px]:w-fit min-[1024px]:flex min-[1024px]:gap-2 min-[1024px]:relative min-[1024px]:top-0 min-[1024px]:right-0 hover:opacity-90 transition'
                 onClick={onOpen}>
-                <p className='max-[1024px]:hidden text-white'>Add candidate</p>
+                <p className='max-[1024px]:hidden text-white'>Add task</p>
                 <Task size="24" color="#fff" />
             </button>
         </>

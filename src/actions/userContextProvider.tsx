@@ -9,6 +9,10 @@ type UserContextType = {
     setUserRole: (userRole: string) => void;
     userName: string;
     setUserName: (userName: string) => void;
+    userEmail: string;
+    setUserEmail: (userEmail: string) => void;
+    userId: string;
+    setUserId: (userId: string) => void;
 };
 
 export const UserContext = createContext<UserContextType | null>(null);
@@ -16,6 +20,8 @@ export const UserContext = createContext<UserContextType | null>(null);
 export default function UserContextProvider({ children }: { children: React.ReactNode }) {
     const [userRole, setUserRole] = React.useState<string>("");
     const [userName, setUserName] = React.useState<string>("");
+    const [userEmail, setUserEmail] = React.useState<string>("");
+    const [userId, setUserId] = React.useState<string>("");
     const {
         supabaseClient: supabase
     } = useSessionContext();
@@ -26,7 +32,7 @@ export default function UserContextProvider({ children }: { children: React.Reac
             const getUserRole = async () => {
                 const { data: userData, error } = await supabase
                     .from("users")
-                    .select("role, full_name")
+                    .select("role, full_name, email, id")
                     .eq("id", user.id)
                     .single();
                 if (error) {
@@ -36,6 +42,8 @@ export default function UserContextProvider({ children }: { children: React.Reac
                 if (userData) {
                     setUserRole(userData.role);
                     setUserName(userData.full_name);
+                    setUserEmail(userData.email);
+                    setUserId(userData.id);
                 }
             };
             getUserRole();
@@ -43,7 +51,15 @@ export default function UserContextProvider({ children }: { children: React.Reac
     }, [user, supabase]);
 
     return (
-        <UserContext.Provider value={{ userRole, setUserRole, userName, setUserName }}>
+        <UserContext.Provider value={{ 
+            userRole, 
+            setUserRole, 
+            userName, 
+            setUserName, 
+            userEmail,
+            setUserEmail,
+            userId,
+            setUserId }}>
             {children}
         </UserContext.Provider>
     );

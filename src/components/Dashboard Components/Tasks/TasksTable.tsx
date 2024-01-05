@@ -11,13 +11,17 @@ import {
     getPaginationRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import { ArrowLeft, ArrowRight, Search } from "@mui/icons-material";
 import { DropDownMenu } from "./DropDownMenu";
 import EditTaskModal from "./EditTaskModal";
 import { useQuery, useQueryClient } from "react-query";
 import { useUserContext } from "@/actions/userContextProvider";
 import { Task } from "iconsax-react";
 import AssignTasksModal from "./AssignTaskModal";
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded';
+import KeyboardDoubleArrowLeftRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded';
+import { differenceInMonths } from 'date-fns';
 
 type Tasks = Database["public"]["Tables"]["tasks"]["Row"]
 
@@ -227,7 +231,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                             className="border-[1px] p-2 rounded-lg hover:border-violet-500 transition cursor-pointer"
                             onClick={() => table.setPageIndex(0)}
                             disabled={!table.getCanPreviousPage()}>
-                            <ArrowLeft />
+                            <KeyboardDoubleArrowLeftRoundedIcon className="rotate-180" />
                         </button>
                     </li>
                     <li className="page-item">
@@ -235,7 +239,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                             className="border-[1px] p-2 rounded-lg hover:border-violet-500 transition cursor-pointer"
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}>
-                            <ArrowLeft />
+                            <KeyboardArrowLeftIcon className="rotate-180" />
                         </button>
                     </li>
                     <li className="page-item">
@@ -243,7 +247,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                             className="border-[1px] p-2 rounded-lg hover:border-violet-500 transition cursor-pointer"
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}>
-                            <ArrowRight />
+                            <KeyboardArrowRightIcon />
                         </button>
                     </li>
                     <li className="page-item">
@@ -253,7 +257,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                                 table.setPageIndex(table.getPageCount() - 1)
                             }
                             disabled={!table.getCanNextPage()}>
-                            <ArrowRight />
+                            <KeyboardDoubleArrowRightRoundedIcon />
                         </button>
                     </li>
                     <li className="page-item">

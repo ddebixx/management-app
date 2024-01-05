@@ -149,7 +149,6 @@ export default function Schedule({ session }: { session: Session | null }) {
       </div>
 
       <div className="p-4 border-[1px] rounded-lg bg-white w-full h-[80vh] overflow-y-auto flex flex-col gap-8">
-
         <div className="flex flex-col gap-4">
           {userName && (
             <div className="flex flex-col justify-end">
@@ -158,7 +157,7 @@ export default function Schedule({ session }: { session: Session | null }) {
               </h1>
 
               {isData.length > 0 && (
-                <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl">There is your list of tasks!</p>
+                <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl">There is your schedule!</p>
               )}
 
               {isData.length === 0 && (
@@ -197,6 +196,8 @@ export default function Schedule({ session }: { session: Session | null }) {
           allDaySlot={false}
           editable={true}
           selectable={true}
+          eventDurationEditable={false}
+          droppable={false}
           selectMirror={true}
           dayMaxEventRows={3}
           schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
@@ -225,7 +226,7 @@ export default function Schedule({ session }: { session: Session | null }) {
             }
           }
           slotDuration={"01:00:00"}
-          eventBackgroundColor="rgba(133,79,243, .15)"
+          eventBackgroundColor="rgba(221,209,254)"
           eventDisplay={"list-item"}
           slotEventOverlap={false}
           eventBorderColor="transparent"

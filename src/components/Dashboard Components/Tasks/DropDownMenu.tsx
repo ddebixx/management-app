@@ -84,11 +84,11 @@ export const DropDownMenu = ({taskId, setTaskToEdit}: DropDownMenuProps) => {
                                 <EditIcon />
                             </div>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item className="group text-base leading-none text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none">
+                        <DropdownMenu.Item className="group text-base text-[#737373] rounded-[3px] flex items-center h-[25px] px-[5px] relative select-none outline-none data-[disabled]:pointer-events-none">
                             <button onClick={() => deleteTask()}>
                                 Delete Task
                             </button>
-                            <div className="ml-auto pl-[20px] text-mauve11 group-data-[highlighted]:text-white group-data-[disabled]:text-mauve8">
+                            <div className="ml-auto pl-[20px] text-red-500">
                                 <DeleteIcon />
                             </div>
                         </DropdownMenu.Item>

@@ -7,6 +7,7 @@ import { Database } from '@/types/supabase'
 import { useUserContext } from '@/actions/userContextProvider'
 import { useMutation, useQuery } from 'react-query'
 import toast from 'react-hot-toast'
+import { Modal } from '../Modal'
 
 export default function UserDetailsModal({ session }: { session: Session | null }) {
     const supabase = createClientComponentClient<Database>()
@@ -78,35 +79,65 @@ export default function UserDetailsModal({ session }: { session: Session | null 
         }
     );
 
-    return (
+    const bodyContent = (
         <>
             {!userRole && (
-                <div className="form-widget">
-                    <div>
-                        <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed' id="email" type="text" value={email || ''}
+                <div className="form-widget flex flex-col gap-4">
+                    <div className='flex flex-col gap-2'>
+                        <label className='font-bold text-base'
+                            htmlFor="email">Email</label>
+                        <input className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
+                            id="email"
+                            type="text"
+                            value={email || ''}
                             onChange={(e) => setEmail(e.target.value)} />
                     </div>
-                    <div>
+                    <div className='flex flex-col gap-2'>
+                        <label className='font-bold text-base'
+                            htmlFor="fullName">Full name</label>
                         <input
-                            className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                            className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
                             id="fullName"
                             type="text"
                             value={fullname || ''}
-                            placeholder='Full name'
                             onChange={(e) => setFullname(e.target.value)}
                         />
                     </div>
-                    <div>
-                        <label htmlFor="Founder">Founder</label>
-                        <input type='checkbox' id="Founder" value="Founder" onChange={(e) => setRole(e.target.value)} />
-                        <label htmlFor="ProjectManager">Project Manager</label>
-                        <input type='checkbox' id="ProjectManager" value="Project manager" onChange={(e) => setRole(e.target.value)} />
-                        <label htmlFor="worker">Worker</label>
-                        <input type='checkbox' id="worker" value="Worker" onChange={(e) => setRole(e.target.value)} />
+                    <div className='flex flex-col gap-2'>
+                        <div className='flex gap-2'>
+                            <label htmlFor="founder">Founder</label>
+                            <input
+                                type='radio'
+                                id="founder"
+                                name="role"
+                                value="founder"
+                                onChange={(e) => setRole(e.target.value)}
+                            />
+                        </div>
+                        <div className='flex gap-2'>
+                            <label htmlFor="ProjectManager">Project Manager</label>
+                            <input
+                                type='radio'
+                                id="ProjectManager"
+                                name="role"
+                                value="Project manager"
+                                onChange={(e) => setRole(e.target.value)}
+                            />
+                        </div>
+                        <div className='flex gap-2'>
+                            <label htmlFor="worker">Worker</label>
+                            <input
+                                type='radio'
+                                id="worker"
+                                name="role"
+                                value="Worker"
+                                onChange={(e) => setRole(e.target.value)}
+                            />
+                        </div>
                     </div>
                     <div>
                         <button
-                            className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
+                            className="px-4 py-2 rounded-full hover:opacity-90 transition bg-gradient-to-b from-violet-600 to-violet-500 text-white w-full"
                             onClick={() => {
                                 updateProfile.mutateAsync({ fullname, email, role })
                                 updateSubordinate.mutateAsync({ fullname, email, role, id: session?.user?.id })
@@ -122,12 +153,22 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                         <button onClick={async () => {
                             await supabase.auth.signOut();
                             router.push('/home')
-                        }} className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-400 p-4" type="submit">
+                        }} className="px-4 py-2 rounded-full hover:opacity-90 transition bg-violet-400 text-white w-full" type="submit">
                             Sign out
                         </button>
                     </div>
                 </div>
             )}
+        </>
+    )
+
+    return (
+        <>
+            <Modal isOpen={true}
+                onClose={() => router.push('/home')}
+                title='User details'
+                body={bodyContent}
+            />
         </>
     )
 }

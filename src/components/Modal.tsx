@@ -59,7 +59,7 @@ export const Modal: React.FC<ModalProps> = ({
                                 </div>
                             </div>
                             {/* BODY */}
-                            <div className="relative p-6 flex-auto">
+                            <div className="relative px-4 pb-4 flex-auto">
                                 {body}
                             </div>
                         </div>

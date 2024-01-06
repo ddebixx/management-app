@@ -96,10 +96,12 @@ export default function AssignTasksModal({ session }: { session: Session | null 
 
 
     const bodyContent = (
-        <div className="form-widget">
-            <div>
+        <div className="form-widget flex flex-col gap-4">
+            <div className='flex flex-col gap-2'>
+                <label className='font-bold text-base'
+                    htmlFor="managerName">Manager name</label>
                 <input
-                    className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                    className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
                     id="managerName"
                     type="text"
                     placeholder='Manager name'
@@ -107,9 +109,11 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                     onChange={(e) => setManagerName(e.target.value)}
                 />
             </div>
-            <div>
+            <div className='flex flex-col gap-2'>
+                <label className='font-bold text-base'
+                    htmlFor="taskName">Task name</label>
                 <input
-                    className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                    className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
                     id="taskName"
                     type="text"
                     value={taskName || ''}
@@ -117,9 +121,11 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                     onChange={(e) => setTaskName(e.target.value)}
                 />
             </div>
-            <div>
+            <div className='flex flex-col gap-2'>
+                <label className='font-bold text-base'
+                    htmlFor="taskDescription">Task description</label>
                 <input
-                    className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                    className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
                     id="taskDescription"
                     type="text"
                     value={taskDescription || ''}
@@ -127,10 +133,11 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                     onChange={(e) => setTaskDescription(e.target.value)}
                 />
             </div>
-            <div>
-                <label htmlFor="expieryDate">Set task expiry date</label>
+            <div className='flex flex-col gap-2'>
+                <label className='font-bold text-base'
+                    htmlFor="exiryDate">Task expiry date</label>
                 <input
-                    className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                    className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
                     id="expiryDate"
                     type="date"
                     value={expiryDate || ''}
@@ -138,8 +145,8 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                     onChange={(e) => setExpiryDate(e.target.value)}
                 />
             </div>
-            <div>
-                <select
+            <div className='flex flex-col gap-2'>
+                <select className='border-[1px] p-2 rounded-full'
                     value={selectedWorkerId || ''}
                     onChange={(e) => {
                         const selectedId = e.target.value;
@@ -154,25 +161,23 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                     ))}
                 </select>
             </div>
-            <div>
-                <button
-                    className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
-                    onClick={async () => {
-                        await updateTaskMutation.mutateAsync({
-                            managerName,
-                            assignmentDate: new Date().toISOString(),
-                            expiryDate,
-                            managerId: user?.id,
-                            workerId: selectedWorkerId,
-                            workerName: selectedWorkerName,
-                            taskName,
-                            taskDescription,
-                            taskStatus: "ACTIVE"
-                        });
-                    }}>
-                    Update
-                </button>
-            </div>
+            <button
+                className="px-4 py-2 rounded-full hover:opacity-90 transition bg-gradient-to-b from-violet-600 to-violet-500 text-white w-full"
+                onClick={async () => {
+                    await updateTaskMutation.mutateAsync({
+                        managerName,
+                        assignmentDate: new Date().toISOString(),
+                        expiryDate,
+                        managerId: user?.id,
+                        workerId: selectedWorkerId,
+                        workerName: selectedWorkerName,
+                        taskName,
+                        taskDescription,
+                        taskStatus: "ACTIVE"
+                    });
+                }}>
+                Update
+            </button>
         </div>
     )
 
@@ -180,7 +185,6 @@ export default function AssignTasksModal({ session }: { session: Session | null 
         <>
             <Modal isOpen={isOpen}
                 onClose={onClose}
-                title="Assign task"
                 body={bodyContent}
             />
             <button className='fixed bottom-24 right-4 bg-gradient-to-b from-violet-600 to-violet-500 p-2 rounded-full min-[1024px]:w-fit min-[1024px]:flex min-[1024px]:gap-2 min-[1024px]:relative min-[1024px]:top-0 min-[1024px]:right-0 hover:opacity-90 transition'

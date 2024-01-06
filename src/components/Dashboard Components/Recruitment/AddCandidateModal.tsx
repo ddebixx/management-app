@@ -9,6 +9,7 @@ import { Database } from '@/types/supabase'
 import { supabaseAdmin } from '@/libs/admin'
 import toast from 'react-hot-toast'
 import { UserAdd } from 'iconsax-react'
+import { FileUpload } from '@mui/icons-material'
 
 
 export const AddCandidateModal = ({ session }: { session: Session | null }) => {
@@ -89,75 +90,85 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
     );
 
     const bodyContent = (
-        <div>
-            <div>
-                <input className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+        <div className="form-widget flex flex-col gap-4">
+            <div className='flex flex-col gap-2'>
+                <label className='font-bold text-base'
+                    htmlFor="email">Email</label>
+                <input className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
                     id="email"
                     type="text"
                     value={email || ''}
-                    placeholder='Email'
                     onChange={(e) => setEmail(e.target.value)} />
             </div>
-            <div>
+            <div className='flex flex-col gap-2'>
+                <label className='font-bold text-base'
+                    htmlFor="fullName">Full name</label>
                 <input
-                    className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                    className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
                     id="fullName"
                     type="text"
                     value={fullname || ''}
-                    placeholder='Full name'
                     onChange={(e) => setFullname(e.target.value)}
                 />
             </div>
-            <div>
+            <div className='flex flex-col gap-2'>
+                <label className='font-bold text-base'
+                    htmlFor="position">Position</label>
                 <input
-                    className='peer w-full p-4 font-light bg-white border-[.5px] rounded-2xl outline-none transition disabled:opacity-70 disabled:cursor-not-allowed'
+                    className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
                     id="position"
                     type="text"
                     value={position || ''}
-                    placeholder='Position'
                     onChange={(e) => setPosition(e.target.value)}
                 />
             </div>
-            <div>
-                <input type="file"
+            <div className='flex flex-col gap-2'>
+                <input
+                    type="file"
+                    id="file"
+                    style={{ display: 'none' }}
                     onChange={(e) => {
                         if (e.target.files) {
                             setFile(e.target.files[0]);
                         }
                     }}
                 />
+                <label htmlFor="file" className="flex items-center gap-2 text-black cursor-pointer">
+                    <FileUpload className='text-violet-600' />
+                    <span>Select a file</span>
+                </label>
+                {file?.name && <p>{file.name}</p>}
             </div>
-            <div>
-                <button
-                    className="button relative disabled:opacity-70 disabled:cursor-not-allowed rounded-lg hover:opacity-80 transtion w-full bg-violet-600 p-4"
-                    onClick={() => {
-                        if (file) {
-                            const path = `applications/${file.name}+${Math.random()}`;
+            <button
+                className="px-4 py-2 rounded-full hover:opacity-90 transition bg-gradient-to-b from-violet-600 to-violet-500 text-white"
+                onClick={() => {
+                    if (file) {
+                        const path = `applications/${file.name}+${Math.random()}`;
 
-                            supabaseAdmin.storage.from('CVs').upload(path, file)
-                                .then(response => {
-                                    if (response.error) {
-                                        console.error('Error uploading file:', response.error.message);
-                                    } else {
-                                        console.log('File uploaded successfully');
-                                    }
-                                });
-
-                            addCandidate({
-                                fullname,
-                                email,
-                                position,
-                                status: 'Received',
-                                file_path: path,
-                                manager_id: session?.user.id as string,
+                        supabaseAdmin.storage.from('CVs').upload(path, file)
+                            .then(response => {
+                                if (response.error) {
+                                    console.error('Error uploading file:', response.error.message);
+                                } else {
+                                    console.log('File uploaded successfully');
+                                }
                             });
-                        } else {
-                            toast.error('Please upload a file')
-                        }
-                    }}>
-                    DUPA
-                </button>
-            </div>
+
+                        addCandidate({
+                            fullname,
+                            email,
+                            position,
+                            status: 'Received',
+                            file_path: path,
+                            manager_id: session?.user.id as string,
+                        });
+                    } else {
+                        toast.error('Please upload a file')
+                    }
+                }}>
+                DUPA
+            </button>
+
         </div>
     )
 
@@ -166,7 +177,6 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}
-                title="Add candidate"
                 body={bodyContent}
             />
             <button className='fixed bottom-24 right-4 bg-gradient-to-b from-violet-600 to-violet-500 p-2 rounded-full min-[1024px]:w-fit min-[1024px]:flex min-[1024px]:gap-2 min-[1024px]:relative min-[1024px]:top-0 min-[1024px]:right-0 hover:opacity-90 transition'

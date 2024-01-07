@@ -17,12 +17,12 @@ const Pagination = dynamic(() => import("../Pagination"), {
 });
 
 
-export const TeamMemberCard = ({ session }: { session: Session | null }) => {
+export const TeamMemberCard = () => {
     const supabase = createClientComponentClient<Database>();
     const [isData, setIsData] = useState<Members[]>([])
     const [loading, setLoading] = useState(true);
     const [memberId, setMemberId] = useState<any | null>(null);
-    const user = session?.user;
+    const { userId } = useUserContext();
     const searchParams = useSearchParams();
     const membersPerPage = 10;
     const page = Number(searchParams.get('page') ?? 1);
@@ -42,7 +42,7 @@ export const TeamMemberCard = ({ session }: { session: Session | null }) => {
             const { data, error, count, status } = await supabase
                 .from("subordinates")
                 .select("*", { count: 'exact' })
-                .eq("manager_id", user?.id as string)
+                .eq("manager_id", userId)
                 .range((page - 1) * membersPerPage, page * membersPerPage - 1);
 
             if (error && status !== 406) {
@@ -87,7 +87,7 @@ export const TeamMemberCard = ({ session }: { session: Session | null }) => {
                                 value={searchPrompt}
                                 onChange={(e) => setSearchPrompt(e.target.value)}
                             />
-                            <AddMemberModal session={session} />
+                            <AddMemberModal />
                         </div>
                     </div>
 

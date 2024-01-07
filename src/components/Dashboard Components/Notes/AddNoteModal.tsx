@@ -14,6 +14,7 @@ import toast from 'react-hot-toast'
 import { useModal } from '@/hooks/useModal'
 import { Modal } from '@/components/Modal'
 import { NoteAdd } from 'iconsax-react'
+import { useUserContext } from '@/actions/userContextProvider'
 
 const HOTKEYS = {
     'cmd+b': 'bold',
@@ -48,9 +49,8 @@ const LeafComponent = (props: React.JSX.IntrinsicAttributes & { attributes: any;
 };
 LeafComponent.displayName = 'LeafComponent';
 
-export const AddNoteModal = ({ session }: { session: Session | null }) => {
+export const AddNoteModal = () => {
     const supabase = createClientComponentClient<Database>()
-    const user = session?.user
     const [title, setTitle] = useState<string | null>(null)
     const [value, setValue] = useState(initialValue)
     const renderElement = useCallback((props: React.JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => <ElementComponent {...props} />, []);
@@ -59,6 +59,7 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
     const [currentMark, setCurrentMark] = useState(null)
     const queryClient = useQueryClient();
     const { isOpen, onOpen, onClose } = useModal()
+    const { userId } = useUserContext();
 
     const toggleMark = (editor: BaseEditor, format: string) => {
         const isActive = isMarkActive(editor, format)
@@ -114,7 +115,7 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
                     {
                         title: title ?? '',
                         content: (content as any) ?? '',
-                        user_id: user?.id as string,
+                        user_id: userId ?? '',
                         created_at: new Date() as any,
                     },
                 ])
@@ -122,7 +123,7 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
         {
             onSuccess: () => {
                 toast.success('Note added successfully!');
-                queryClient.invalidateQueries(['notes', user?.id]);
+                queryClient.invalidateQueries(['notes', userId]);
             },
             onError: (error) => {
                 toast.error('Something went wrong!')
@@ -187,7 +188,7 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
                         addNote({
                             title,
                             content: value as any,
-                            user_id: user?.id
+                            user_id: userId
                         })
 
                         onClose()

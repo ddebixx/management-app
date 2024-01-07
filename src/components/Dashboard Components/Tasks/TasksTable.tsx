@@ -24,23 +24,22 @@ import KeyboardDoubleArrowLeftRoundedIcon from '@mui/icons-material/KeyboardDoub
 
 type Tasks = Database["public"]["Tables"]["tasks"]["Row"]
 
-export const TasksTable = ({ session }: { session: Session | null }) => {
+export const TasksTable = () => {
     const supabase = createClientComponentClient<Database>();
     const [isData, setIsData] = useState<Tasks[]>([])
     const [taskToEdit, setTaskToEdit] = useState<any | null>(null)
-    const user = session?.user;
     const columnHelper = createColumnHelper();
     const [globalFilter, setGlobalFilter] = useState("");
     const queryClient = useQueryClient();
-    const { userRole, userName } = useUserContext();
+    const { userRole, userName, userId } = useUserContext();
 
 
-    const useTasksQuery = ({ user, supabase, userRole }: any) => {
-        return useQuery(['tasks', user?.id, userRole], async () => {
+    const useTasksQuery = ({ userId, supabase, userRole }: any) => {
+        return useQuery(['tasks', userId, userRole], async () => {
             const { data, error, status } = await supabase
                 .from('tasks')
                 .select('*')
-                .eq(userRole === 'Project manager' ? 'assigned_manager' : 'assigned_worker', user?.id as string);
+                .eq(userRole === 'Project manager' ? 'assigned_manager' : 'assigned_worker', userId as string);
 
             if (error && status !== 406) {
                 throw error;
@@ -64,7 +63,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
         });
     };
 
-    const { data: tasksData, isLoading, isError } = useTasksQuery({ user, supabase, userRole });
+    const { data: tasksData, isLoading, isError } = useTasksQuery({ userId, supabase, userRole });
 
     const generateColumns = useCallback((): any[] => {
         if (isData.length === 0) {
@@ -125,12 +124,10 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                         const taskId = "id" in (row.row.original as any) ? (row.row.original as any).id : null;
                         return (
                             <>
-                                {user && (
-                                    <DropDownMenu
-                                        setTaskToEdit={setTaskToEdit}
-                                        taskId={taskId}
-                                    />
-                                )}
+                                <DropDownMenu
+                                    setTaskToEdit={setTaskToEdit}
+                                    taskId={taskId}
+                                />
                             </>
                         );
                     }
@@ -139,7 +136,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
         }
 
         return [];
-    }, [isData, columnHelper, user]);
+    }, [isData, columnHelper]);
 
     const columns = useMemo(() => generateColumns(), [generateColumns]);
 
@@ -186,7 +183,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
                             value={globalFilter}
                             onChange={(e) => setGlobalFilter(e.target.value)}
                         />
-                        <AssignTasksModal session={session} />
+                        <AssignTasksModal />
                     </div>
                 </div>
 

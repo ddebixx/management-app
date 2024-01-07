@@ -9,8 +9,9 @@ import toast from 'react-hot-toast'
 import { useModal } from '@/hooks/useModal'
 import { UserAdd } from 'iconsax-react'
 import { Modal } from '@/components/Modal'
+import { useUserContext } from '@/actions/userContextProvider'
 
-export const AddMemberModal = ({ session }: { session: Session | null }) => {
+export const AddMemberModal = () => {
     const supabase = createClientComponentClient<Database>()
     const [fullname, setFullname] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
@@ -19,6 +20,7 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
     const [role, setRole] = useState<string | null>(null)
     const queryClient = useQueryClient();
     const { isOpen, onOpen, onClose } = useModal();
+    const { userId } = useUserContext();
 
     const addMember = useMutation(
         async ({
@@ -47,14 +49,14 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
                         role: role ?? '',
                         contract: contract ?? '',
                         position: position ?? '',
-                        manager_id: session?.user?.id,
+                        manager_id: userId ?? '',
                     },
                 ])
         },
         {
             onSuccess: () => {
                 toast.success('Profile updated!')
-                queryClient.invalidateQueries(['subordinates', session?.user?.id])
+                queryClient.invalidateQueries(['subordinates', userId])
             },
             onError: () => {
                 toast.error('Error updating the data!')
@@ -132,7 +134,7 @@ export const AddMemberModal = ({ session }: { session: Session | null }) => {
                             role,
                             contract,
                             position,
-                            manager_id: session?.user?.id,
+                            manager_id: userId,
                             id: ""
                         })
                         await supabaseAdmin.auth.admin.inviteUserByEmail(email ?? '')

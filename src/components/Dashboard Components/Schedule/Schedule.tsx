@@ -18,20 +18,19 @@ import "@/styles/schedule.css"
 
 type Hours = Database["public"]["Tables"]["hours"]["Row"]
 
-export default function Schedule({ session }: { session: Session | null }) {
+export default function Schedule() {
   const supabase = createClientComponentClient<Database>();
   const [isData, setIsData] = useState<Hours[]>([])
-  const user = session?.user;
   const queryClient = useQueryClient();
-  const { userName, userRole } = useUserContext();
+  const { userName, userId} = useUserContext();
 
   const { data: hoursData, isLoading, isError } = useQuery(
-    ['hours', user?.id],
+    ['hours', userId],
     async () => {
       const { data, error, status } = await supabase
         .from("hours")
         .select("*")
-        .eq("userId", user?.id as string);
+        .eq("userId", userId);
 
       if (error && status !== 406) {
         throw error;
@@ -39,7 +38,7 @@ export default function Schedule({ session }: { session: Session | null }) {
 
       if (data) {
         setIsData(data);
-        queryClient.invalidateQueries(['hours', user?.id]);
+        queryClient.invalidateQueries(['hours', userId]);
       }
     },
   );
@@ -50,11 +49,11 @@ export default function Schedule({ session }: { session: Session | null }) {
       await supabase
         .from("hours")
         .upsert(newHours)
-        .eq("userId", user?.id as string);
+        .eq("userId", userId);
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['hours', user?.id]);
+        queryClient.invalidateQueries(['hours', userId]);
       },
     }
   );
@@ -67,7 +66,7 @@ export default function Schedule({ session }: { session: Session | null }) {
       title: "",
       startTime: selectInfo.startStr,
       endTime: selectInfo.endStr,
-      userId: user?.id,
+      userId: userId,
     };
 
     Swal.fire({
@@ -109,7 +108,7 @@ export default function Schedule({ session }: { session: Session | null }) {
           showConfirmButton: false,
           timer: 1000,
         });
-        queryClient.invalidateQueries(['hours', user?.id]);
+        queryClient.invalidateQueries(['hours', userId]);
       },
       onError: () => {
         Swal.fire({

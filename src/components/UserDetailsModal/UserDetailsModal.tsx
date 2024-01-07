@@ -9,13 +9,13 @@ import { useMutation } from 'react-query'
 import toast from 'react-hot-toast'
 import { Modal } from '../Modal'
 
-export default function UserDetailsModal({ session }: { session: Session | null }) {
+export default function UserDetailsModal() {
     const supabase = createClientComponentClient<Database>()
     const [fullname, setFullname] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
     const [role, setRole] = useState<string | null>(null)
     const router = useRouter();
-    const { userRole } = useUserContext();
+    const { userRole, userId } = useUserContext();
 
     if (userRole) {
         router.push('/dashboard/schedule')
@@ -69,7 +69,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                     email: email ?? '',
                     full_name: fullname ?? '',
                     role: role ?? '',
-                    id: session?.user?.id
+                    id: userId ?? ''
                 })
                 .eq('email', email ?? '')
         },
@@ -124,7 +124,7 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                             className="px-4 py-2 rounded-full hover:opacity-90 transition bg-gradient-to-b from-violet-600 to-violet-500 text-white w-full"
                             onClick={() => {
                                 updateProfile.mutateAsync({ fullname, email, role })
-                                updateSubordinate.mutateAsync({ fullname, email, role, id: session?.user?.id })
+                                updateSubordinate.mutateAsync({ fullname, email, role, id: userId })
 
                                 router.push('/dashboard/schedule')
                             }

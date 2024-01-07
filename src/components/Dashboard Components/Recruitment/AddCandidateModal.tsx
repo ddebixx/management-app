@@ -10,18 +10,20 @@ import { supabaseAdmin } from '@/libs/admin'
 import toast from 'react-hot-toast'
 import { UserAdd } from 'iconsax-react'
 import { FileUpload } from '@mui/icons-material'
+import { useUserContext } from '@/actions/userContextProvider'
 
 
-export const AddCandidateModal = ({ session }: { session: Session | null }) => {
+export const AddCandidateModal = () => {
     const supabase = createClientComponentClient<Database>()
     const [fullname, setFullname] = useState<string | null>(null)
     const [email, setEmail] = useState<string | null>(null)
     const [position, setPosition] = useState<string | null>(null)
     const [file, setFile] = useState<File | null>(null);
     const queryClient = useQueryClient();
-    const { refetch } = useQuery(['recruitment', session?.user.id])
+    const { userId } = useUserContext();
+    const { refetch } = useQuery(['recruitment', userId as string])
     const { isOpen, onOpen, onClose } = useModal();
-
+    
     const { mutateAsync: addCandidate } = useMutation(
         async ({
             fullname,
@@ -68,7 +70,7 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
     const uploadFileMutation = useMutation(
         async (file: File) => {
             const fileExt = file.name.split('.').pop()
-            const filePath = `${session?.user.id}/${Math.random()}.${fileExt}`
+            const filePath = `${userId}/${Math.random()}.${fileExt}`
 
             const { data, error } = await supabase.storage
                 .from('CVs')
@@ -160,7 +162,7 @@ export const AddCandidateModal = ({ session }: { session: Session | null }) => {
                             position,
                             status: 'Received',
                             file_path: path,
-                            manager_id: session?.user.id as string,
+                            manager_id: userId,
                         });
                     } else {
                         toast.error('Please upload a file')

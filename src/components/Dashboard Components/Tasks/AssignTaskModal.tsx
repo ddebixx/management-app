@@ -9,10 +9,11 @@ import { useSecondModal } from '@/hooks/useSecondModal'
 import { Modal } from '@/components/Modal'
 import toast from 'react-hot-toast'
 import { Task } from 'iconsax-react'
+import { useUserContext } from '@/actions/userContextProvider'
 
 type Members = Database["public"]["Tables"]["subordinates"]["Row"]
 
-export default function AssignTasksModal({ session }: { session: Session | null }) {
+export default function AssignTasksModal() {
     const supabase = createClientComponentClient<Database>()
     const [managerName, setManagerName] = useState<string | null>(null)
     const [expiryDate, setExpiryDate] = useState<string | null>(null)
@@ -21,17 +22,17 @@ export default function AssignTasksModal({ session }: { session: Session | null 
     const [isData, setIsData] = useState<Members[]>([])
     const [selectedWorkerId, setSelectedWorkerId] = useState<string | null>(null);
     const [selectedWorkerName, setSelectedWorkerName] = useState<string | null>(null);
-    const user = session?.user
     const queryClient = useQueryClient();
     const { isOpen, onOpen, onClose } = useSecondModal();
+    const { userId } = useUserContext();
 
     const { data: workerData, isLoading, isError } = useQuery(
-        ['subordinates', user?.id],
+        ['subordinates', userId],
         async () => {
             const { data, error, status } = await supabase
                 .from("subordinates")
                 .select("*")
-                .eq("manager_id", user?.id as string);
+                .eq("manager_id", userId as string);
 
             if (error && status !== 406) {
                 throw error;
@@ -39,7 +40,7 @@ export default function AssignTasksModal({ session }: { session: Session | null 
 
             if (data) {
                 setIsData(data);
-                queryClient.invalidateQueries(['subordinates', user?.id]);
+                queryClient.invalidateQueries(['subordinates', userId]);
             }
         },
     );
@@ -49,7 +50,7 @@ export default function AssignTasksModal({ session }: { session: Session | null 
             managerName,
             assignmentDate,
             expiryDate,
-            managerId = user?.id,
+            managerId = userId,
             workerId,
             workerName,
             taskName,
@@ -81,12 +82,12 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                         task_status: taskStatus ?? '',
                     },
                 ])
-                .eq('id', user?.id as string);
+                .eq('id', userId);
         },
         {
             onSuccess: () => {
                 toast.success('Task assigned successfully!');
-                queryClient.invalidateQueries(['tasks', user?.id]);
+                queryClient.invalidateQueries(['tasks', userId]);
             },
             onError: (error) => {
                 throw error;
@@ -168,7 +169,7 @@ export default function AssignTasksModal({ session }: { session: Session | null 
                         managerName,
                         assignmentDate: new Date().toISOString(),
                         expiryDate,
-                        managerId: user?.id,
+                        managerId: userId,
                         workerId: selectedWorkerId,
                         workerName: selectedWorkerName,
                         taskName,

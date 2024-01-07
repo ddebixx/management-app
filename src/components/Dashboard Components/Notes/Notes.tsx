@@ -17,9 +17,8 @@ const Pagination = dynamic(() => import("../Pagination"), {
 });
 
 
-export const Notes = ({ session }: { session: Session | null }) => {
+export const Notes = () => {
     const supabase = createClientComponentClient<Database>()
-    const user = session?.user
     const [isData, setIsData] = useState<Notes[]>([])
     const queryClient = useQueryClient();
     const searchParams = useSearchParams();
@@ -27,17 +26,17 @@ export const Notes = ({ session }: { session: Session | null }) => {
     const page = Number(searchParams.get('page') ?? 1);
     const pathName = '/dashboard/notes';
     const [pageCount, setPageCount] = useState(0);
-    const { userName } = useUserContext();
+    const { userName, userId } = useUserContext();
     const [searchPrompt, setSearchPrompt] = useState("");
     const filteredData = isData.filter(item => item.title && item.title.includes(searchPrompt));
 
     const { data: notesData, isLoading, isError } = useQuery(
-        ['notes', user?.id, page],
+        ['notes', userId, page],
         async () => {
             const { data, error, status, count } = await supabase
                 .from("notes")
                 .select("*", { count: 'exact' })
-                .eq("user_id", user?.id as string)
+                .eq("user_id", userId)
                 .range((page - 1) * notesPerPage, page * notesPerPage - 1);
 
             if (error && status !== 406) {
@@ -47,7 +46,7 @@ export const Notes = ({ session }: { session: Session | null }) => {
             if (data) {
                 setIsData(data);
                 setPageCount(Math.ceil(count as number / notesPerPage));
-                queryClient.invalidateQueries(['notes', user?.id]);
+                queryClient.invalidateQueries(['notes', userId]);
             }
         },
     );
@@ -80,7 +79,7 @@ export const Notes = ({ session }: { session: Session | null }) => {
                                 value={searchPrompt}
                                 onChange={(e) => setSearchPrompt(e.target.value)}
                             />
-                            <AddNoteModal session={session} />
+                            <AddNoteModal />
                         </div>
                     </div>
 

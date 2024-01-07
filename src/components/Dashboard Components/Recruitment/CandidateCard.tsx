@@ -21,7 +21,7 @@ const Pagination = dynamic(() => import("../Pagination"), {
 });
 
 
-export const CandidateCard = ({ session }: { session: Session | null }) => {
+export const CandidateCard = () => {
     const supabase = createClientComponentClient<Database>()
     const [isData, setIsData] = useState<Candidates[]>([])
     const [candidateId, setCandidateId] = useState<any | null>(null);
@@ -103,7 +103,7 @@ export const CandidateCard = ({ session }: { session: Session | null }) => {
                                 value={searchPrompt}
                                 onChange={(e) => setSearchPrompt(e.target.value)}
                             />
-                            <AddCandidateModal session={session} />
+                            <AddCandidateModal />
                         </div>
                     </div>
 

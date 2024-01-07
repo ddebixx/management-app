@@ -1,11 +1,11 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/supabase'
 import { useUserContext } from '@/actions/userContextProvider'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation } from 'react-query'
 import toast from 'react-hot-toast'
 import { Modal } from '../Modal'
 
@@ -16,6 +16,10 @@ export default function UserDetailsModal({ session }: { session: Session | null 
     const [role, setRole] = useState<string | null>(null)
     const router = useRouter();
     const { userRole } = useUserContext();
+
+    if (userRole) {
+        router.push('/dashboard/schedule')
+    }
 
     const updateProfile = useMutation(
         async ({
@@ -104,36 +108,16 @@ export default function UserDetailsModal({ session }: { session: Session | null 
                         />
                     </div>
                     <div className='flex flex-col gap-2'>
-                        <div className='flex gap-2'>
-                            <label htmlFor="founder">Founder</label>
-                            <input
-                                type='radio'
-                                id="founder"
-                                name="role"
-                                value="founder"
-                                onChange={(e) => setRole(e.target.value)}
-                            />
-                        </div>
-                        <div className='flex gap-2'>
-                            <label htmlFor="ProjectManager">Project Manager</label>
-                            <input
-                                type='radio'
-                                id="ProjectManager"
-                                name="role"
-                                value="Project manager"
-                                onChange={(e) => setRole(e.target.value)}
-                            />
-                        </div>
-                        <div className='flex gap-2'>
-                            <label htmlFor="worker">Worker</label>
-                            <input
-                                type='radio'
-                                id="worker"
-                                name="role"
-                                value="Worker"
-                                onChange={(e) => setRole(e.target.value)}
-                            />
-                        </div>
+                        <label htmlFor="role">Role</label>
+                        <select
+                            id="role"
+                            name="role"
+                            onChange={(e) => setRole(e.target.value)}
+                        >
+                            <option value="founder">Founder</option>
+                            <option value="Project manager">Project Manager</option>
+                            <option value="Worker">Worker</option>
+                        </select>
                     </div>
                     <div>
                         <button

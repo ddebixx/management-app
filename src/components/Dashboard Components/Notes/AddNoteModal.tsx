@@ -38,13 +38,23 @@ const initialValue = [
     },
 ]
 
+const ElementComponent = (props: React.JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => {
+    return <Element {...props} />;
+};
+ElementComponent.displayName = 'ElementComponent';
+
+const LeafComponent = (props: React.JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => {
+    return <Leaf {...props} />;
+};
+LeafComponent.displayName = 'LeafComponent';
+
 export const AddNoteModal = ({ session }: { session: Session | null }) => {
     const supabase = createClientComponentClient<Database>()
     const user = session?.user
     const [title, setTitle] = useState<string | null>(null)
     const [value, setValue] = useState(initialValue)
-    const renderElement = useCallback((props: React.JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => <Element {...props} />, [])
-    const renderLeaf = useCallback((props: React.JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => <Leaf {...props} />, [])
+    const renderElement = useCallback((props: React.JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => <ElementComponent {...props} />, []);
+    const renderLeaf = useCallback((props: React.JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => <LeafComponent {...props} />, []);
     const editor = useMemo(() => withHistory(withReact(createEditor())), [])
     const [currentMark, setCurrentMark] = useState(null)
     const queryClient = useQueryClient();
@@ -77,17 +87,17 @@ export const AddNoteModal = ({ session }: { session: Session | null }) => {
                 </button>
             )
         );
+        Button.displayName = 'Button';
 
-        return (
-            <Button
-                active={isMarkActive(editor, format)}
-                onMouseDown={(event: { preventDefault: () => void }) => {
-                    event.preventDefault();
-                    toggleMark(editor, format);
-                }}
-            />
-        );
+        const active = isMarkActive(editor, format);
+        const onMouseDown = (event: { preventDefault: () => void }) => {
+            event.preventDefault();
+            toggleMark(editor, format);
+        };
+
+        return <Button active={active} onMouseDown={onMouseDown} />;
     };
+    ToolbarButton.displayName = 'ToolbarButton';
 
     const { mutateAsync: addNote } = useMutation(
         async ({

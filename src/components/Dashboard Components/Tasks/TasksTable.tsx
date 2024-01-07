@@ -2,7 +2,7 @@
 
 import { Database } from "@/types/supabase";
 import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
     createColumnHelper,
     flexRender,
@@ -21,7 +21,6 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded';
 import KeyboardDoubleArrowLeftRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded';
-import { differenceInMonths } from 'date-fns';
 
 type Tasks = Database["public"]["Tables"]["tasks"]["Row"]
 
@@ -67,7 +66,7 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
 
     const { data: tasksData, isLoading, isError } = useTasksQuery({ user, supabase, userRole });
 
-    const generateColumns = (): any[] => {
+    const generateColumns = useCallback((): any[] => {
         if (isData.length === 0) {
             return [];
         } else if (isData.length > 0 && "id" in isData[0]) {
@@ -140,9 +139,9 @@ export const TasksTable = ({ session }: { session: Session | null }) => {
         }
 
         return [];
-    };
+    }, [isData, columnHelper, user]);
 
-    const columns = useMemo(() => generateColumns(), [isData]);
+    const columns = useMemo(() => generateColumns(), [generateColumns]);
 
     const table = useReactTable({
         data: isData,

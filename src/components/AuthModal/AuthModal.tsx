@@ -36,16 +36,17 @@ export const AuthModal = () => {
             onChange={onChange}>
             <Auth
                 theme="dark"
-                magicLink
-                providers={['google']}
+                magicLink={false}
+                providers={[]}
                 supabaseClient={supabaseClient}
                 appearance={{
                     theme: ThemeSupa,
                     variables: {
                         default: {
                             colors: {
-                                brand: '#404040',
-                                brandAccent: "#22c55e",
+                                brand: '#854FF3',
+                                brandAccent: "#8e5cf1",
+                                inputText: "#FF",
                             }
                         }
                     }

@@ -8,7 +8,7 @@ export default async function Register() {
     const {
         data: { session },
     } = await supabase.auth.getSession()
- 
+    
     return (
         <>
             <div className="flex flex-col items-center justify-center">

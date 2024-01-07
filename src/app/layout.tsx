@@ -1,6 +1,5 @@
 "use client"
 
-// import { GeistSans } from 'geist/font'
 import './globals.css'
 import { ModalProvider } from '@/providers/ModalProvider'
 import { AuthModal } from '@/components/AuthModal/AuthModal'
@@ -18,7 +17,7 @@ export default function RootLayout({
 }) {
 
   const queryClient = new QueryClient()
-
+  
   return (
     <html lang="en">
       <body>

@@ -11,7 +11,7 @@ import { Settings } from "./Settings/Settings";
 export const Navbar = () => {
     const router = useRouter();
     const supabase = createClientComponentClient<Database>();
-    const { userRole, userName } = useUserContext();
+    const { userRole, userName, clearUserRole } = useUserContext();
     const linkStyle = "p-2 transition rounded-full hover:text-white hover:bg-gradient-to-b hover:from-violet-600 hover:to-violet-500 text-[#404040] flex gap-4"
     const activeStyle = "p-2 transition rounded-full text-white bg-gradient-to-b from-violet-600 to-violet-500 flex gap-4"
     const currentRoute = usePathname();
@@ -32,7 +32,6 @@ export const Navbar = () => {
             icon: <Task size="24" />
         },
     ]
-
     const Links = [
         {
             name: "Recruitment",
@@ -46,7 +45,9 @@ export const Navbar = () => {
         },
     ]
 
-
+    if (!userRole) {
+        router.push('/home')
+    }
 
     return (
         <>
@@ -102,6 +103,8 @@ export const Navbar = () => {
                         <button className="max-[1024px]:hidden p-2 transition rounded-full hover:text-white hover:bg-gradient-to-b hover:from-violet-600 hover:to-violet-500 text-[#404040] flex self-end gap-4"
                             onClick={async () => {
                                 await supabase.auth.signOut();
+                                clearUserRole();
+
                                 router.push('/home')
                             }}
                             type="submit">

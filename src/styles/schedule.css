@@ -92,3 +92,7 @@ th:last-child {
     border: none;
     box-shadow: none !important;
 }
+
+.fc .fc-scrollgrid {
+    border-radius: 8px;
+}

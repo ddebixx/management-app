@@ -7,14 +7,27 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/navigation'
 
-const serialize = (node) => {
+type CustomText = Text & {
+    bold?: boolean;
+    italic?: boolean;
+    'heading-one'?: boolean;
+    'heading-two'?: boolean;
+    code?: boolean;
+};
+
+type Node = {
+    children: Node[];
+    type: string;
+}
+
+const serialize = (node: Node | CustomText) => {
     if (Text.isText(node)) {
         if (node.code) {
             return <code>{node.text}</code>
         }
         if (node['heading-one']) {
             return (
-                <h1 className="text-3xl mb-10 text-gray-800 max-[768px]:text-2xl">
+                <h1 className="text-xl mb-10 text-gray-800 max-[768px]:text-xl">
                     {node.text}
                 </h1>
             )
@@ -33,7 +46,7 @@ const serialize = (node) => {
         }
 
         if (node['heading-two']) {
-            return <h2 className="text-2xl font-cal">{node.text}</h2>
+            return <h2 className="text-lg font-cal">{node.text}</h2>
         }
 
         return node.text
@@ -50,9 +63,9 @@ const serialize = (node) => {
             return <p className="underline">{children}</p>
 
         case 'heading-one':
-            return <h1 className="text-4xl">{children}</h1>
+            return <h1 className="text-xl">{children}</h1>
         case 'heading-two':
-            return <h2 className="text-2xl">{children}</h2>
+            return <h2 className="text-lg">{children}</h2>
         case 'code':
             return <code className="bg-gray-50 p-2 m-2">{children}</code>
 
@@ -113,6 +126,10 @@ export const NoteEditor = () => {
         }
     )
 
+    function isCustomTextOrNode(node: any): node is CustomText | Node {
+        return node && (node.type || node.text || node.children);
+      }
+
     const handleNoteDelete = async (noteId: string) => {
         Swal.fire({
             title: "Are you sure?",
@@ -140,9 +157,9 @@ export const NoteEditor = () => {
                         <div className="w-full border-[1px] h-full rounded-lg p-4 overflow-y-auto"
                             key={note.id}>
                             {Array.isArray(note.content) ? (
-                                note.content.map((node, index) => (
-                                    <div key={index}>{serialize(node)}</div>
-                                ))
+                                note.content.map((node: any, index) => (
+                                    isCustomTextOrNode(node) ? <div key={index}>{serialize(node)}</div> : null
+                                  ))
                             ) : (
                                 <p>No content available for this note.</p>
                             )}

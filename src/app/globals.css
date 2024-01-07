@@ -24,3 +24,7 @@ body {
 ::selection {
   background-color: rgba(127,95,255, .2);
 }
+
+::-webkit-scrollbar {
+  width: 0.1px;
+}

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useEffect, useState } from 'react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Database } from '@/types/supabase'
 import { useUserContext } from '@/actions/userContextProvider'
@@ -17,9 +17,11 @@ export default function UserDetailsModal() {
     const router = useRouter();
     const { userRole, userId } = useUserContext();
 
-    if (userRole) {
-        router.push('/dashboard/schedule')
-    }
+    useEffect(() => {
+        if (userRole) {
+            router.push("/dashboard/schedule");
+        }
+    }, [userRole, router])
 
     const updateProfile = useMutation(
         async ({

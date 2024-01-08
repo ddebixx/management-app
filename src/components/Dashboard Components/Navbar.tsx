@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation"
 import { Calendar, LogoutCurve, Note, People, Task, UserAdd } from 'iconsax-react';
 import { Settings } from "./Settings/Settings";
+import { useEffect } from "react";
 
 export const Navbar = () => {
     const router = useRouter();
@@ -45,9 +46,11 @@ export const Navbar = () => {
         },
     ]
 
-    if (!userRole) {
-        router.push('/home')
-    }
+    useEffect(() => {
+        if (!userRole) {
+            router.push("/home");
+        }
+    }, [userRole, router])
 
     return (
         <>

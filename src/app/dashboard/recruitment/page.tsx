@@ -1,7 +1,9 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar"
 import { CandidateCard } from "@/components/Dashboard Components/Recruitment/CandidateCard"
 
-export default async function TasksPage() {
+export default function TasksPage() {
+    const location = typeof window !== 'undefined' ? window.location : undefined;
+
     return (
         <>
             <div className="flex gap-16 items-center">

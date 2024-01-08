@@ -1,7 +1,9 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar"
 import { TeamMemberCard } from "@/components/Dashboard Components/TeamMembers/TeamMemberCard"
 
-export default async function TeamMembersPage() {
+export default function TeamMembersPage() {
+    const location = typeof window !== 'undefined' ? window.location : undefined;
+    
     return (
         <>
             <div className="flex gap-16 items-center">

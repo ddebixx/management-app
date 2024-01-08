@@ -7,7 +7,7 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { DateSelectArg, EventApi, EventClickArg } from "@fullcalendar/core"
 import { renderEventContent, handleEvents } from "@/actions/calendar/EventHandlers"
-import { Session, createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useState } from "react"
 import Swal from "sweetalert2"
 import { Database } from "@/types/supabase"
@@ -18,7 +18,7 @@ import "@/styles/schedule.css"
 
 type Hours = Database["public"]["Tables"]["hours"]["Row"]
 
-export default function Schedule() {
+export const Schedule = () => {
   const supabase = createClientComponentClient<Database>();
   const [isData, setIsData] = useState<Hours[]>([])
   const queryClient = useQueryClient();

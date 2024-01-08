@@ -17,6 +17,7 @@ export function RenderBuilderContent({ content }: BuilderPageProps) {
   // Call the useIsPreviewing hook to determine if
   // the page is being previewed in Builder
   const isPreviewing = useIsPreviewing();
+  const location = typeof window !== 'undefined' ? window.location : undefined;
   // If "content" has a value or the page is being previewed in Builder,
   // render the BuilderComponent with the specified content and model props.
   if (content || isPreviewing) {

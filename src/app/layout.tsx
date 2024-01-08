@@ -17,6 +17,7 @@ export default function RootLayout({
 }) {
 
   const queryClient = new QueryClient()
+  const location = typeof window !== 'undefined' ? window.location : undefined;
   
   return (
     <html lang="en">

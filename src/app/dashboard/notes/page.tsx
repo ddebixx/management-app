@@ -1,10 +1,8 @@
 import { Navbar } from "@/components/Dashboard Components/Navbar";
 import { Notes } from "@/components/Dashboard Components/Notes/Notes";
-import { Database } from "@/types/supabase";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 
-export default async function NotesPage() {
+export default function NotesPage() {
+    const location = typeof window !== 'undefined' ? window.location : undefined;
 
     return (
         <>

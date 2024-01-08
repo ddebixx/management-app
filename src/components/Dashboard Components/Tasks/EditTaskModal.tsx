@@ -17,6 +17,7 @@ export default function EditTaskModal({ taskToEdit }: { taskToEdit: number }) {
     const [taskDescription, setTaskDescription] = useState<string | null>(null)
     const { isOpen, onOpen, onClose } = useSecondModal();
     const queryClient = useQueryClient();
+    const location = typeof window !== 'undefined' ? window.location : undefined;
 
     useEffect(() => {
         if (taskToEdit) {

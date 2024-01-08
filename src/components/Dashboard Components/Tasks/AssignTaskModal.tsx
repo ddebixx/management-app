@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Session, createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '@/types/supabase'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useSecondModal } from '@/hooks/useSecondModal'
@@ -25,7 +24,7 @@ export default function AssignTasksModal() {
     const queryClient = useQueryClient();
     const { isOpen, onOpen, onClose } = useSecondModal();
     const { userId } = useUserContext();
-
+    
     const { data: workerData, isLoading, isError } = useQuery(
         ['subordinates', userId],
         async () => {

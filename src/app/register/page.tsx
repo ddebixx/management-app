@@ -1,11 +1,7 @@
 import UserDetailsModal from "@/components/UserDetailsModal/UserDetailsModal";
-import { Database } from "@/types/supabase";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 
-export default async function Register() {
-  
-    
+export default function Register() {
+    const location = typeof window !== 'undefined' ? window.location : undefined;
     
     return (
         <>

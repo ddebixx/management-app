@@ -9,6 +9,7 @@ interface PageProps {
 }
 
 export default async function Page(props: PageProps) {
+    const location = typeof window !== 'undefined' ? window.location : undefined;
     const content = await builder
         .get("page", {
             userAttributes: {

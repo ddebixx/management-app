@@ -2,8 +2,6 @@
 
 import { EventApi, EventContentArg } from "@fullcalendar/core"
 
-
-
 export const handleEvents = (events: EventApi[]) => {
     ({
         currentEvents: events

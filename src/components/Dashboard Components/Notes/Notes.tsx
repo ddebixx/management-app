@@ -111,7 +111,6 @@ export const Notes = () => {
                         ))
                         }
                     </div>
-
                     {pageCount > 1 && <Pagination page={page} pageCount={pageCount} pathname={pathName} />}
                 </div>
             </div>

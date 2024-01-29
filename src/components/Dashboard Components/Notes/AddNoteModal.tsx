@@ -134,7 +134,7 @@ export const AddNoteModal = () => {
 
 
     const bodyContent = (
-        <div className='flex flex-col gap-4 w-[600px]'>
+        <div className='flex flex-col gap-4  min-[768px]:w-[600px]'>
             <div className='flex flex-col gap-4 min-[768px]:w-[600px]'>
                 <input type="text"
                     placeholder="Note title..."

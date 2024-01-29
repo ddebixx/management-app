@@ -58,16 +58,16 @@ export const Notes = () => {
                     <div className="flex flex-col gap-4">
                         {userName && (
                             <div className="flex flex-col justify-end">
-                                <h1 className="text-3xl font-bold truncate min-[768px]:text-4xl">
+                                <h1 className="text-3xl font-bold truncate min-[768px]:text-4xl max-[450px]:text-2xl">
                                     Hello, <span className="bg-clip-text text-transparent bg-gradient-to-b from-violet-600 to-violet-500">{userName}</span>
                                 </h1>
 
                                 {isData.length > 0 && (
-                                    <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl">Your notes are waiting for you!</p>
+                                    <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl max-[450px]:text-base">Your notes are waiting for you!</p>
                                 )}
 
                                 {isData.length === 0 && (
-                                    <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl">You have no notes yet. Create one!</p>
+                                    <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl max-[450px]:text-lg">You have no notes yet. Create one!</p>
                                 )}
                             </div>
                         )}

@@ -146,8 +146,12 @@ export const Schedule = () => {
         <Calendar className="absolute z-0 opacity-10" size={164} />
         <h1 className="z-[23423423] text-3xl text-center font-bold text-[#404040] w-[85%]">For better user experience switch to PC</h1>
       </div>
+<<<<<<< HEAD
 
       <div className="p-4 border-[1px] rounded-lg bg-white w-full h-[80vh] overflow-y-auto flex flex-col gap-8">
+=======
+      <div className="p-4 border-[1px] rounded-lg bg-white w-full h-[80vh] overflow-y-auto flex flex-col gap-8 max-[1024px]:hidden">
+>>>>>>> 95309d9 (Project reupload)
         <div className="flex flex-col gap-4">
           {userName && (
             <div className="flex flex-col justify-end">

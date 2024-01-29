@@ -66,16 +66,16 @@ export const TeamMemberCard = () => {
                     <div className="flex flex-col gap-4">
                         {userName && (
                             <div className="flex flex-col justify-end">
-                                <h1 className="text-3xl font-bold truncate min-[768px]:text-4xl">
+                                <h1 className="text-3xl font-bold truncate min-[768px]:text-4xl max-[450px]:text-2xl">
                                     Hello, <span className="bg-clip-text text-transparent bg-gradient-to-b from-violet-600 to-violet-500">{userName}</span>
                                 </h1>
 
                                 {isData.length > 0 && (
-                                    <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl">There are your team members!</p>
+                                    <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl max-[450px]:text-base">There are your team members!</p>
                                 )}
 
                                 {isData.length === 0 && (
-                                    <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl">No team members yet</p>
+                                    <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl max-[450px]:text-base">No team members yet</p>
                                 )}
                             </div>
                         )}
@@ -96,7 +96,7 @@ export const TeamMemberCard = () => {
                             <div className="flex justify-between items-start p-4 w-full bg-white rounded-lg border-[1px] hover:border-violet-300 transition shadow-[0_0px_10px_0px_rgba(0,0,0,0.1)] gap-4"
                                 key={member.id}>
                                 <div className='flex gap-4'>
-                                    <div className="bg-violet-500 w-12 h-12 rounded-full flex items-center justify-center text-white text-xl uppercase">
+                                    <div className="bg-violet-500 w-12 h-12 rounded-full flex items-center justify-center text-white text-xl uppercase max-[380px]:w-8 max-[380px]:h-8 max-[380px]:text-sm">
                                         <p>
                                             {member.full_name?.split(' ').map(name => name.charAt(0)).join('')}
                                         </p>
@@ -104,21 +104,23 @@ export const TeamMemberCard = () => {
                                     <div className='flex flex-col gap-4'>
                                         <div className='flex flex-col gap-1'>
                                             <div className='flex gap-2 items-center max-[600px]:flex-col max-[600px]:items-start max-[600px]:gap-1'>
-                                                <p className='font-bold text-xl truncate max-[600px]:text-lg'>
-                                                    {member.full_name}
-                                                </p>
+                                                <div className="flex justify-between items-start">
+                                                    <p className='font-bold text-xl truncate max-[600px]:text-lg'>
+                                                        {member.full_name}
+                                                    </p>
+                                                    <div onClick={() => handleMemberSelect}>
+                                                        <DropDownMenu memberId={member.id} />
+                                                    </div>
+                                                </div>
                                                 <p className='bg-violet-600/10 w-fit rounded-lg text-xs p-1'>
                                                     {member.position}
                                                 </p>
                                             </div>
-                                            <p className='text-black/70'>
+                                            <p className='text-black/70 truncate max-[360px]:w-24 max-[420px]:w-36'>
                                                 {member.email}
                                             </p>
                                         </div>
                                     </div>
-                                </div>
-                                <div onClick={() => handleMemberSelect}>
-                                    <DropDownMenu memberId={member.id} />
                                 </div>
                             </div>
                         ))

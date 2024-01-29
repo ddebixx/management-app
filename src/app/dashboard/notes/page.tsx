@@ -8,7 +8,11 @@ export default function NotesPage() {
         <>
             <div className="flex gap-16 items-center">
                 <Navbar />
+<<<<<<< HEAD
                 <div className="p-8 w-full">
+=======
+                <div className="p-8 w-full max-[320px]:p-4">
+>>>>>>> 95309d9 (Project reupload)
                     <Notes />
                 </div>
             </div>

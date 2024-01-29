@@ -8,7 +8,7 @@ export default function NotePage() {
         <>
             <div className="flex gap-16 items-center">
                 <Navbar />
-                <div className="p-8 w-full">
+                <div className="p-8 w-full max-[320px]:p-4">
                     <NoteEditor />
                 </div>
             </div>

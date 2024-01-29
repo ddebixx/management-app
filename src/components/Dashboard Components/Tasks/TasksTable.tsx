@@ -159,19 +159,19 @@ export const TasksTable = () => {
                     <Task className="absolute z-0 opacity-10" size={164} />
                     <h1 className="z-[23423423] text-3xl text-center font-bold text-[#404040] w-[85%]">For better user experience switch to PC</h1>
                 </div>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 max-[1024px]:hidden">
                     {userName && (
                         <div className="flex flex-col justify-end">
-                            <h1 className="text-3xl font-bold truncate min-[768px]:text-4xl">
+                            <h1 className="text-3xl font-bold truncate min-[768px]:text-4xl max-[450px]:text-2xl">
                                 Hello, <span className="bg-clip-text text-transparent bg-gradient-to-b from-violet-600 to-violet-500">{userName}</span>
                             </h1>
 
                             {isData.length > 0 && (
-                                <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl">There is your list of tasks!</p>
+                                <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl max-[450px]:text-base">There is your list of tasks!</p>
                             )}
 
                             {isData.length === 0 && (
-                                <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl">No applications yet</p>
+                                <p className="text-lg font-semibold text-black/70 min-[768px]:text-xl max-[450px]:text-base">No applications yet</p>
                             )}
                         </div>
                     )}
@@ -186,7 +186,6 @@ export const TasksTable = () => {
                         <AssignTasksModal />
                     </div>
                 </div>
-
                 <div className="border-[.5px] w-full h-[550px] p-4 rounded-lg flex flex-col items-end gap-4 max-[1024px]:hidden">
                     <table className="w-full">
                         <thead className="border-b-[.5px] p-4">

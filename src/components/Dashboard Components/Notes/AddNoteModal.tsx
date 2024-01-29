@@ -135,68 +135,70 @@ export const AddNoteModal = () => {
 
     const bodyContent = (
         <div className='flex flex-col gap-4 w-[600px]'>
-            <input type="text"
-                placeholder="Note title..."
-                className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
-                value={title || ''}
-                onChange={(e) => setTitle(e.target.value)}
-            />
-            <Slate editor={editor}
-                initialValue={value}
-                onChange={(value) => setValue(value as any)}>
-                <div className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full min-[768px]:w-64">
-                    <div>
-                        <ToolbarButton format="bold" icon="B" />
-                        <ToolbarButton
-                            format="italic"
-                            icon={"I"}
-                        />
-                        <ToolbarButton
-                            format="underline"
-                            icon={"U"}
-                        />
-                        <ToolbarButton format="code" icon={"< >"} />
-                        <ToolbarButton format="heading-one" icon="H1" />
-                        <ToolbarButton format="heading-two" icon="H2" />
-                    </div>
-                </div>
-                <Editable
-                    className="px-4 py-2 outline-none border border-gray-300 rounded-lg h-64 resize-none overflow-y-scroll "
-                    renderElement={renderElement}
-                    renderLeaf={renderLeaf}
-                    spellCheck
-                    autoFocus
-                    onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                            toggleMark(editor, currentMark as any);
-                            setCurrentMark(null);
-                        }
-                        for (const hotkey in HOTKEYS) {
-                            if (isHotkey(hotkey, event)) {
-                                event.preventDefault();
-                                const mark = HOTKEYS[hotkey as keyof typeof HOTKEYS];
-                                toggleMark(editor, mark);
-                                setCurrentMark(mark as any);
-                            }
-                        }
-                    }}
+            <div className='flex flex-col gap-4 min-[768px]:w-[600px]'>
+                <input type="text"
+                    placeholder="Note title..."
+                    className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full w-full min-[768px]:w-64"
+                    value={title || ''}
+                    onChange={(e) => setTitle(e.target.value)}
                 />
-            </Slate>
-            <button
-                onClick={
-                    () => {
-                        addNote({
-                            title,
-                            content: value as any,
-                            user_id: userId
-                        })
+                <Slate editor={editor}
+                    initialValue={value}
+                    onChange={(value) => setValue(value as any)}>
+                    <div className="px-4 py-2 outline-none border transition focus:border-violet-300 border-gray-300 rounded-full min-[768px]:w-64">
+                        <div>
+                            <ToolbarButton format="bold" icon="B" />
+                            <ToolbarButton
+                                format="italic"
+                                icon={"I"}
+                            />
+                            <ToolbarButton
+                                format="underline"
+                                icon={"U"}
+                            />
+                            <ToolbarButton format="code" icon={"< >"} />
+                            <ToolbarButton format="heading-one" icon="H1" />
+                            <ToolbarButton format="heading-two" icon="H2" />
+                        </div>
+                    </div>
+                    <Editable
+                        className="px-4 py-2 outline-none border border-gray-300 rounded-lg h-64 resize-none overflow-y-scroll "
+                        renderElement={renderElement}
+                        renderLeaf={renderLeaf}
+                        spellCheck
+                        autoFocus
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                toggleMark(editor, currentMark as any);
+                                setCurrentMark(null);
+                            }
+                            for (const hotkey in HOTKEYS) {
+                                if (isHotkey(hotkey, event)) {
+                                    event.preventDefault();
+                                    const mark = HOTKEYS[hotkey as keyof typeof HOTKEYS];
+                                    toggleMark(editor, mark);
+                                    setCurrentMark(mark as any);
+                                }
+                            }
+                        }}
+                    />
+                </Slate>
+                <button
+                    onClick={
+                        () => {
+                            addNote({
+                                title,
+                                content: value as any,
+                                user_id: userId
+                            })
 
-                        onClose()
+                            onClose()
+                        }
                     }
-                }
-                className="bg-gradient-to-b from-violet-600 to-violet-500 text-white font-bold py-2 px-4 rounded-full hover:opacity-90 transition">
-                Add Note
-            </button>
+                    className="bg-gradient-to-b from-violet-600 to-violet-500 text-white font-bold py-2 px-4 rounded-full hover:opacity-90 transition">
+                    Add Note
+                </button>
+            </div>
         </div>
     )
 
